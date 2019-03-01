@@ -6,15 +6,16 @@ body {
 
 .bg { 
   background-color: #fff;
- background-size:cover;
+  background-size:cover;
   background-attachment: fixed;
   background-position: center;
   background-repeat: no-repeat;
+  background-image: url('../bg.jpg');
 }
 
 .file-upload {
-  background-color: #transparent;
-  width: 300px; /* for setting a fixed size */
+  background-color: transparent;
+  width: 50vw; /* for setting a fixed size */
   margin: 0 auto;
   padding: 20px;
 }
