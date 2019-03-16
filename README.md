@@ -1,27 +1,20 @@
-# Slim Framework 3 Skeleton Application
+# Image Translator Web Application
 
-Use this skeleton application to quickly setup and start working on a new Slim Framework 3 application. This application uses the latest Slim 3 with the PHP-View template renderer. It also uses the Monolog logger.
+This is a web application that can be used to translate text on user-provided images. This repository contains the front-end and back-end code for the application. 
 
-This skeleton application was built for Composer. This makes setting up a new Slim Framework application quick and easy.
+The front-end of the application is written in JavaScript and the backend is written in PHP using the [Slim3 PHP framework](http://www.slimframework.com)
 
 ## Install the Application
 
-Run this command from the directory in which you want to install your new Slim Framework application.
+Run this command from the directory in which you want to install your new Slim Framework based application.
 
-    php composer.phar create-project slim/slim-skeleton [my-app-name]
+    php composer.phar install
 
-Replace `[my-app-name]` with the desired directory name for your new application. You'll want to:
-
-* Point your virtual host document root to your new application's `public/` directory.
+* Point your virtual host document root to the application's `src/public/` directory.
 * Ensure `logs/` is web writeable.
-
-To run the application in development, you can run these commands 
-
-	cd [my-app-name]
-	php composer.phar start
 
 Run this command in the application directory to run the test suite
 
-	php composer.phar test
+    php composer.phar test
 
-That's it! Now go build something cool.
+That's it! 
