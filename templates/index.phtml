@@ -1,37 +1,50 @@
 <!DOCTYPE html>
 <html lang="en">
 
-    <head>
-        <meta charset="utf-8">
-        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
 
-        <title>Image Translate</title>
-        <meta name="description" content="">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Image Translate</title>
+  <meta name="description" content="">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
 
-        <!-- Custom CSS -->
-        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
-        <link rel="stylesheet" href="css/web.css">
-    </head>
+  <!-- Custom CSS -->
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+  <link rel="stylesheet" href="css/web.css">
+</head>
 
-    <body class="bg">
+<body class="bg">
+<h1 class="text-center">Image Translate: Quickly translate your images</h1>
 
-        <h1 class="text-center">Image Translate: Quickly translate your images</h1>
+<div class="file-upload">
+    <div class="image-upload-wrap">
+      <input class="file-upload-input" type='file' onchange="readURL(this);" accept="image/*" />
+      <div class="drag-text">
+        <h3>Drag and drop a file or select add Image</h3>
+      </div><!-- end drag-text -->
+    </div><!-- end image-upload-wrap -->
 
-        <div class="file-upload">
-            <div class="image-upload-wrap">
-                <input class="file-upload-input" type='file' onchange="readURL(this);" accept="image/*" />
-                <div class="drag-text">
-                    <h3>Drag and drop a file or select add Image</h3>
-                </div>
-            </div>
-            <div class="file-upload-content">
-                <img class="file-upload-image" src="#" alt="your image" />
-                <div class="image-title-wrap">
-                    <button type="button" onclick="removeUpload()" class="remove-image">Remove <span class="image-title">Uploaded Image</span></button>
-                </div>
-            </div>
-            <div class="file-upload-controls">
+    <div class="file-upload-content">
+      <img class="file-upload-image" src="#" id="myImage"/>
+      <div class="image-title-wrap">
+        <button type="button" onclick="removeUpload()" class="remove-image">Remove <span class="image-title">Uploaded Image</span></button>
+
+	<div class="container">
+	  <div class="row">
+	    <div class="col-sm-12">
+		<span id="progress"></span>
+
+		<br><h6>OCR Result:</h6>
+		  <div id ="result"></div>
+	    </div> <!-- end col -->
+	  </div><!-- end row -->
+	</div><!-- end container -->
+
+       </div><!-- end image-title-wrap -->
+     </div><!-- end file-upload-content -->
+
+<div class="file-upload-controls">
                 <div class="language-select-div">
                     <label for="language-select">Please select the destination language.</label>
                     <select id="language-select">
@@ -49,21 +62,34 @@
                 <div class="get-translation-div">
                     <button id="get-translation-button">Get Translation</button>
                 </div>
-            </div>
+</div>
 
-        </div>
+</div><!-- end file-upload -->
+
+  <script class="jsbin" src="https://ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js"></script>
+  <script src="js/fabric.js"></script>
+  <script src="js/tesseract.js"></script>
+  <script src="js/web.js"></script>
+  <script src="https://cdn.rawgit.com/naptha/tesseract.js/0.2.0/dist/tesseract.js"></script>
+
+<script>
+    //TODO this code should go in web.js so all the JS is in one place. Maybe we call an "initialization" function here but that's it.
+    let img = document.getElementById("myImage")
+    img.onload = function() {
+        console.log("loaded...", "$$$$");
+        Tesseract.recognize(img).progress((progress) => {
+            console.log(progress, "$$$$");
+        }).then((result) => {
+            console.log(result, "$$$$");
+            $('#result').text(result.text);
+        });
+    }
+</script>
 
 
+  <footer id="footer" class="text-center">
+    Project &copy;2019 Shiyun Huang, Brandon Foltz, Choekgi Kalsang, Dennis Uritsky, Kaitlin O'Malley, Stephen Epler, Olivia Chen, Bihn Nguyen
+  </footer>
 
-
-
-        <footer id="footer" class="text-center">
-            Project &copy;2019 Shiyun Huang, Brandon Foltz, Choekgi Kalsang, Dennis Uritsky, Kaitlin O'Malley, Stephen Epler, Olivia Chen, Bihn Nguyen
-        </footer>
-        <script class="jsbin" src="https://ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js"></script>
-        <script src="js/fabric.js"></script>
-        <script src="js/tesseract.js"></script>
-        <script src="js/web.js"></script>
-    </body>
-
+</body>
 </html>
