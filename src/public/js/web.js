@@ -10,6 +10,7 @@ function readURL(input) {
       $('.file-upload-content').show();
 
       $('.image-title').html(input.files[0].name);
+
     };
 
     reader.readAsDataURL(input.files[0]);
@@ -30,3 +31,70 @@ $('.image-upload-wrap').bind('dragover', function () {
 	$('.image-upload-wrap').bind('dragleave', function () {
 		$('.image-upload-wrap').removeClass('image-dropping');
 });
+
+
+function performOCR() {
+  /*
+    Placeholder function which calls translateReq()
+  */
+  translateReq([
+    {
+      id: 1,
+      source_language: 'latin',
+      destination_language: 'english',
+      text: 'Bellum est malo'
+    }
+  ])
+  .then(translatedText => {
+    console.log(translatedText);
+    // Do something with text..
+  })
+  .catch(error => {
+    console.error(error);
+  })
+
+}
+
+
+async function translateReq(textList) {
+  /*
+    @desc
+      Performs an AJAX request to the /translate url using http POST method.
+ 
+    @param object textList
+      This is a javascript object that contains a list of objects containing text as well as meta data describing translating preferences. For example:
+      const textList = [
+        {
+          id: 1,
+          source_language: 'latin',
+          destination_language: 'english',
+          text: 'Bellum est malo'
+        }
+      ];
+     
+    @return
+      A javascript object that contains a list of objects containing the translated text as well as meta data describing the translation. This data is received from the server over AJAX. For example:
+      const textList = [
+        {
+          id: 1,
+          source_language: 'latin',
+          destination_language: 'english',
+          translated_text: 'War is bad'
+        }
+      ];
+ 
+    @throws Exception on unsuccessful network connection to the server.
+  */
+
+  const res = await fetch('../translate.json', { // Dummy url endpoint for now
+    method: 'GET', //Should be POST
+    //body: JSON.stringify(textList),
+    headers: {
+      'Content-Type': 'application/json'
+    }
+  }).then(response => response.json()).catch(error => {
+    console.error(error);
+  });
+  return res;
+}
+ 
