@@ -22,7 +22,7 @@ class RoutesTest extends BaseTestCase
      */
     public function testTranslateResponse()
     {
-        $response = $this->runApp('POST', '/translate', ['translate' => []]);
+        $response = $this->runApp('POST', '/translate');
 
         $this->assertEquals(200, $response->getStatusCode());
     }

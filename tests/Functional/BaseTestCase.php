@@ -32,6 +32,9 @@ class BaseTestCase extends \PHPUnit_Framework_TestCase
      */
     public function runApp($requestMethod, $requestUri, $requestData = null)
     {
+        // Will this fix the 500 error in the tests?
+        require __DIR__ . '/../../vendor/autoload.php';
+
         // Create a mock environment for testing with
         $environment = Environment::mock(
             [

@@ -1,6 +1,5 @@
 <?php
-
-namespace ImageTranslator;
+namespace App;
 
 /**
  * Description of TranslateRequestValidator
@@ -8,10 +7,6 @@ namespace ImageTranslator;
  * @author jaywalker
  */
 class TranslationRequestValidator {
-
-    public function __construct() {
-        return;
-    }
 
     public static function get_translate_array_errors($translateArray) {
         //echo "Called the function";
@@ -50,6 +45,10 @@ class TranslationRequestValidator {
             }
         }*/
 
-        return "";
+        return [];
+    }
+
+    public static function is_translate_array_valid($translateArray = []) {
+        return true;
     }
 }
