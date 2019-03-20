@@ -7,7 +7,12 @@ function readURL(input) {
             var reader = new FileReader();
             reader.onload = function (e) {
             }
-
+if(extension == 'pdf'){
+                alert('You have inserted a pdf.')
+            }
+            else if (extension == 'jpg', 'png', 'jpeg'){
+                alert('You have inserted an image.')
+            }
           reader.onload = function(e) {
       $('.image-upload-wrap').hide();
 
