@@ -30,3 +30,11 @@ $('.image-upload-wrap').bind('dragover', function () {
 	$('.image-upload-wrap').bind('dragleave', function () {
 		$('.image-upload-wrap').removeClass('image-dropping');
 });
+
+function runOCR(myImage) {
+ Tesseract.recognize(myImage)
+       .progress(function  (p) { console.log('progress', p)    })
+       .then(function (result) { console.log('result', result) })
+var imgTag = document.getElementById("myImage")
+runOCR(imgTag);
+};
