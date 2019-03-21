@@ -37,7 +37,7 @@ $('.image-upload-wrap').bind('dragleave', function () {
 function handleOCRResult(result) {
     //This is boilerplate that sets up a translation request for the server
     
-    //TODO populate the request with data according to what was found in the OCR result
+    //TODO populate the request with data according to what was found in the OCR result (passed as parameter)
     translateReq([
     {
         id: 1,
@@ -48,6 +48,7 @@ function handleOCRResult(result) {
     ])
     .then(translatedText => {
         console.log(translatedText);
+        window.alert(translatedText.text);
         // Do something with text..
 
         //[Task 6]: for Binh
@@ -60,7 +61,6 @@ function handleOCRResult(result) {
         console.error(error);
     });
 }
-
 
 async function translateReq(textList) {
     /*
@@ -94,7 +94,6 @@ async function translateReq(textList) {
 
     const res = await fetch('/translate', { 
         method: 'POST', 
-        //body: JSON.stringify(textList),
         headers: {
             'Content-Type': 'application/json'
         }

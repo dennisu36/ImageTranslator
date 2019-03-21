@@ -128,13 +128,10 @@ body {
 h1 {
     color: #fff; /* color of header */
     margin-top: 50px;
-<<<<<<< HEAD
 }
 
 h6 {
 	color: #ffffff; /* color of header */
-=======
->>>>>>> 1a7d0dc941e163eb247c3efca7d8763cd9fea58b
 }
 
 #footer {
@@ -160,4 +157,8 @@ h6 {
     display: inline-block;
     margin: 0 auto;
     margin-top: 50px;
+}
+
+.ocr-result {
+    color: #fff;
 }

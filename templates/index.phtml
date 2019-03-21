@@ -38,8 +38,8 @@
                                 <span id="progress"></span>
 
 
-                                <br><h6>OCR Result:</h6>
-                                <div id ="result"></div>
+                                <br><h6 class="ocr-result">OCR Result:</h6>
+                                <div class="ocr-result" id="result"></div>
                             </div> <!-- end col -->
                         </div><!-- end row -->
                     </div><!-- end container -->
@@ -88,6 +88,7 @@
 
                     //TODO the output text should go in a textbox object on the page so that the user can read & select it more easily.
                     $('#result').text(result.text);
+                    handleOCRResult(result);
 
                 });
             }
