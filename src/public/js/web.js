@@ -31,25 +31,8 @@ $('.image-upload-wrap').bind('dragover', function () {
 $('.image-upload-wrap').bind('dragleave', function () {
     $('.image-upload-wrap').removeClass('image-dropping');
 });
-        
-//unused code?
-/*function performOCR() {
-    var imgTag = document.getElementById("myImage"); //find the image element in the page
-    Tesseract.recognize(imgTag) //pass it to tesseract.js
-       .progress(function  (p) { 
-           console.log('progress', p)
-           //TODO will the progress bar get updated here? 
-           //seems to be what is output in the console.
-        })
-       .then(function (result) { 
-           console.log('result', result) 
-           //TODO once OCR is complete, need to pack up the recognized text segments into some kind of object for
-           //passing around to other parts of the application that require the information. Eg, pass to "handleOCRResult"
-           //as well as populating a global object associating text segments Tesseract found with an 'id' set on the
-           //individual translation requests sent to the server.
-        });
-};*/
     
+//[Task 4]: for Stephen.
 //TODO pass the OCR result here and process the detected segments appropriately.
 function handleOCRResult(result) {
     //This is boilerplate that sets up a translation request for the server
@@ -67,6 +50,7 @@ function handleOCRResult(result) {
         console.log(translatedText);
         // Do something with text..
 
+        //[Task 6]: for Binh
         //TODO render the text back on the Canvas corresponding to where it came from
         //-> related, should correspond to ID number which is associated with
         //-> blocks of text detected by tesseract.js.
