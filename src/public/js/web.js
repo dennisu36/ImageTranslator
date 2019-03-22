@@ -52,6 +52,11 @@ function handleOCRResult(result) {
         // Do something with text..
 
         //[Task 6]: for Binh
+        var i;
+        for (i = 0; i < translatedText.lines.length; i++) {
+          console.log(translatedText.lines[i]);
+        }
+        
         //TODO render the text back on the Canvas corresponding to where it came from
         //-> related, should correspond to ID number which is associated with
         //-> blocks of text detected by tesseract.js.
