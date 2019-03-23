@@ -38,15 +38,32 @@ function handleOCRResult(result) {
     //This is boilerplate that sets up a translation request for the server
     
     //TODO populate the request with data according to what was found in the OCR result (passed as parameter)
-    translateReq([
-    {
-        id: 1,
-        source_language: 'latin',
-        destination_language: 'english',
-        text: 'Bellum est malo'
-    }
-    ])
-    .then(translatedText => {
+
+    const destLang = document.getElementById('language-dest-select').value;
+    const srcLang = document.getElementById('language-src-select').value;
+
+    console.log('Destination langauge: ' + destLang);
+    console.log('Source language: ' + srcLang);
+
+    const boundingBoxes = {}; // Object containing bounding boxes, indexed by line ID.
+
+    // Array.prototype.map function, return new array from lines array to be sent via Ajax.
+    const json = result.lines.map((line, index) => {
+      boundingBoxes[index] = line.bbox;
+
+      const obj = {};
+      obj.id = index;
+      obj.text = line.text;
+      obj.source_language = srcLang;
+      obj.destination_langauge = destLang;
+      return obj;
+    });
+
+    console.log(boundingBoxes);
+    console.log(json);
+
+    translateReq(json)
+      .then(translatedText => {
         console.log(translatedText);
         window.alert(translatedText.text);
         // Do something with text..
@@ -56,8 +73,8 @@ function handleOCRResult(result) {
         //-> related, should correspond to ID number which is associated with
         //-> blocks of text detected by tesseract.js.
 
-    })
-    .catch(error => {
+      })
+      .catch(error => {
         console.error(error);
     });
 }
