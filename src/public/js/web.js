@@ -112,11 +112,12 @@ async function translateReq(textList) {
 async function handleServerResponse(textList, OCRResult) {
   var i;
   for (i = 0; i < textList.length; i++) {
-    console.log(textList[i].translated_text);
-    var bbox = OCRResult.lines[i].bbox;
+    var text = textList[i];
+    console.log(text.translated_text);
+    var bbox = OCRResult.lines[text.id].bbox;
     console.log(bbox);
     // renderText() doesn't exist yet.
-    // renderText(textList[i].translated_text, bbox.x0, bbox.x1, bbox.y0, bbox.y1);
+    // renderText(text.translated_text, bbox.x0, bbox.x1, bbox.y0, bbox.y1);
   }
 }
 
