@@ -49,18 +49,19 @@ function handleOCRResult(result) {
     .then(translatedText => {
         console.log(translatedText);
         window.alert(translatedText.text);
-        // Do something with text..
 
         //[Task 6]: for Binh
-        var i;
-        for (i = 0; i < translatedText.lines.length; i++) {
-          console.log(translatedText.lines[i]);
-        }
-        
         //TODO render the text back on the Canvas corresponding to where it came from
         //-> related, should correspond to ID number which is associated with
         //-> blocks of text detected by tesseract.js.
-
+        handleServerResponse([
+          {
+            id: 1,
+            source_language: 'latin',
+            destination_language: 'english',
+            translated_text: 'War is bad'
+          }
+        ], result);
     })
     .catch(error => {
         console.error(error);
@@ -106,5 +107,16 @@ async function translateReq(textList) {
         console.error(error);
     });
     return res;
+}
+
+async function handleServerResponse(textList, OCRResult) {
+  var i;
+  for (i = 0; i < textList.length; i++) {
+    console.log(textList[i].translated_text);
+    var bbox = OCRResult.lines[i].bbox;
+    console.log(bbox);
+    // renderText() doesn't exist yet.
+    // renderText(textList[i].translated_text, bbox.x0, bbox.x1, bbox.y0, bbox.y1);
+  }
 }
 
