@@ -22,7 +22,13 @@
     },
     "autoload-dev": {
         "psr-4": {
-            "Tests\\": "tests/"
+            "Tests\\": "tests/",
+            "App\\": "src/app/"
+        }
+    },
+    "autoload": {
+        "psr-4": {
+            "App\\": "src/app/"
         }
     },
     "config": {
