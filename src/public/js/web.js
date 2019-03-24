@@ -6,8 +6,7 @@ function readURL(input) {
         if (isSuccess) {
             var reader = new FileReader();
             if(extension == 'pdf'){
-                //alert('You have inserted a pdf.');
-                //TODO convert the PDF to an image and load it into the image container.
+                alert("TODO convert the PDF to an image and load it into the image container.");
             } else if (extension == 'jpg', 'png', 'jpeg') {
                 //alert('You have inserted an image.');
                 //Nothing else to do here because the image .onload function initiates OCR
