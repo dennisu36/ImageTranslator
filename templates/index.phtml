@@ -35,7 +35,7 @@
           <div class="container">
             <div class="row">
               <div class="col-sm-12">
-                <span id="progress"></span>
+                <span class="progress-msg" id="progress"></span>
 
 
                 <br><h6 class="ocr-result">OCR Result:</h6>
@@ -83,9 +83,13 @@
               console.log("loaded...", "$$$$");
               Tesseract.recognize(img).progress((progress) => {
                 console.log(progress, "$$$$");
-                $('#progress').text = progress.status + ": " + progress.progress.toFixed() * 100 + " %";
+                if (progress.hasOwnProperty('progress')) {
+                  $('#progress').text(progress.status + ": " + progress.progress.toFixed(2) * 100 + " %");
+                } else {
+                  $('#progress').text(progress.status);
+                }
               }).then((result) => {
-                $('#progress').text = "";
+                $('#progress').text("");
                 console.log(result, "$$$$");
 
                 //TODO the output text should go in a textbox object on the page so that the user can read & select it more easily.
