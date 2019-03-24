@@ -34,9 +34,7 @@
                     <div class="container">
                         <div class="row">
                             <div class="col-sm-12">
-                                <span id="progress"></span>
-
-
+                                <span class="progress-msg" id="progress"></span>
                                 <br><h6 class="ocr-result">OCR Result:</h6>
                                 <div class="ocr-result" id="result"></div>
                             </div> <!-- end col -->
@@ -96,7 +94,7 @@
               Tesseract.recognize(img).progress((progress) => {
                 console.log(progress, "$$$$");
                 if (progress.hasOwnProperty('progress')) {
-                  $('#progress').text(progress.status + ": " + progress.progress.toFixed(2) * 100 + " %");
+                  $('#progress').text(progress.status + ": " + (progress.progress * 100).toFixed(0) + " %");
                 } else {
                   $('#progress').text(progress.status);
                 }

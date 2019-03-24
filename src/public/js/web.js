@@ -118,6 +118,7 @@ async function translateReq(textList) {
 
     const res = await fetch('/translate', { 
         method: 'POST', 
+        body: JSON.stringify(textList),
         headers: {
             'Content-Type': 'application/json'
         }
