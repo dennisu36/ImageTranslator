@@ -87,7 +87,7 @@ function handleOCRResult(result) {
             destination_language: 'english',
             translated_text: 'War is bad'
           }
-        ], result);
+        ], boundingBoxes);
     })
     .catch(error => {
         console.error(error);
@@ -136,7 +136,7 @@ async function translateReq(textList) {
     return res;
 }
 
-async function handleServerResponse(textList) {
+async function handleServerResponse(textList, boundingBoxes) {
   var i;
   for (i = 0; i < textList.length; i++) {
     var text = textList[i];
