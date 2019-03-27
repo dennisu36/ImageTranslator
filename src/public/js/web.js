@@ -140,9 +140,9 @@ async function handleServerResponse(textList, boundingBoxes) {
   var i;
   for (i = 0; i < textList.length; i++) {
     var text = textList[i];
+    var bbox = boundingBoxes[text.id];
     console.log(text.translated_text);
-    console.log(boundingBoxes[text.id]);
-    // renderText() doesn't exist yet.
-    // renderText(text.translated_text, bbox.x0, bbox.x1, bbox.y0, bbox.y1);
+    console.log(bbox);
+    renderText(text.translated_text, bbox.x0, bbox.y0, bbox.x1 - bbox.x0, bbox.y1 - bbox.y0);
   }
 }
