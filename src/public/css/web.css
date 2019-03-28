@@ -169,3 +169,10 @@ h6 {
 .ocr-result {
     color: #fff;
 }
+
+#myCanvas {
+    max-height: 200px;
+    max-width: 200px;
+    margin: auto;
+    padding: 20px;
+}
