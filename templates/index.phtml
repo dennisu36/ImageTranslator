@@ -28,7 +28,7 @@
             <div class="file-upload-content">
 
                 <!-- [Task 1.2] change this img to a canvas and ensure existing features still work correctly. -->
-                <img class="file-upload-image" src="#" id="myImage"/>
+                <canvas class="file-upload-image" src="#" id="myImage"/>
                 <div class="image-title-wrap">
                     <button type="button" onclick="removeUpload()" class="remove-image">Remove <span class="image-title">Uploaded Image</span></button>
 
@@ -78,10 +78,10 @@
         <script>
             //TODO this code should go in web.js so all the JS is in one place. Maybe we call an "initialization" function here but that's it.
             //just better to keep all the code in one place so we know where to look.
-            let img = document.getElementById("myImage")
-            img.onload = function() {
+            let canvas = document.getElementById("myImage")
+            canvas.onload = function() {
                 console.log("loaded...", "$$$$");
-                Tesseract.recognize(img).progress((progress) => {
+                Tesseract.recognize(canvas).progress((progress) => {
                     console.log(progress, "$$$$");
                 }).then((result) => {
                     console.log(result, "$$$$");
