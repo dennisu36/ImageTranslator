@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html lang="en">
-
     <head>
         <meta charset="utf-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -19,7 +18,7 @@
 
         <div class="file-upload">
             <div class="image-upload-wrap">
-                <input class="file-upload-input" type='file' onchange="readURL(this);" accept="image/*" />
+                <input class="file-upload-input" type='file' onchange="readURL(this);" accept="image/*, .pdf" />
                 <div class="drag-text">
                     <h3>Drag and drop a file or select add Image</h3>
                 </div><!-- end drag-text -->
@@ -35,9 +34,7 @@
                     <div class="container">
                         <div class="row">
                             <div class="col-sm-12">
-                                <span id="progress"></span>
-
-
+                                <span class="progress-msg" id="progress"></span>
                                 <br><h6 class="ocr-result">OCR Result:</h6>
                                 <div class="ocr-result" id="result"></div>
                             </div> <!-- end col -->
@@ -49,8 +46,21 @@
 
             <div class="file-upload-controls">
                 <div class="language-select-div">
-                    <label for="language-select">Please select the destination language.</label>
-                    <select id="language-select">
+                    <label for="language-src-select">Please select the source language.</label>
+                    <select id="language-src-select">
+                        <option value="auto">auto</option>
+                        <option value="english">English</option>
+                        <option value="spanish">Spanish</option>
+                        <option value="french">French</option>
+                        <option value="chinese">Chinese</option>
+                        <option value="german">German</option>
+                        <option value="greek">Greek</option>
+                        <option value="italian">Italian</option>
+                        <option value="russian">Russian</option>
+                        <option value="vietnamese">Vietnamese</option>
+                    </select>
+                    <label for="language-dest-select">Please select the destination language.</label>
+                    <select id="language-dest-select">
                         <option value="english">English</option>
                         <option value="spanish">Spanish</option>
                         <option value="french">French</option>
@@ -78,26 +88,31 @@
         <script>
             //TODO this code should go in web.js so all the JS is in one place. Maybe we call an "initialization" function here but that's it.
             //just better to keep all the code in one place so we know where to look.
-            let img = document.getElementById("myImage")
-            img.onload = function() {
-                console.log("loaded...", "$$$$");
-                Tesseract.recognize(img).progress((progress) => {
-                    console.log(progress, "$$$$");
-                }).then((result) => {
-                    console.log(result, "$$$$");
+            let img = document.getElementById("myImage");
+            img.onload = function () {
+              console.log("loaded...", "$$$$");
+              Tesseract.recognize(img).progress((progress) => {
+                console.log(progress, "$$$$");
+                if (progress.hasOwnProperty('progress')) {
+                  $('#progress').text(progress.status + ": " + (progress.progress * 100).toFixed(0) + " %");
+                } else {
+                  $('#progress').text(progress.status);
+                }
+              }).then((result) => {
+                $('#progress').text("");
+                console.log(result, "$$$$");
 
-                    //TODO the output text should go in a textbox object on the page so that the user can read & select it more easily.
-                    $('#result').text(result.text);
-                    handleOCRResult(result);
+                //TODO the output text should go in a textbox object on the page so that the user can read & select it more easily.
+                $('#result').text(result.text);
+                handleOCRResult(result);
 
-                });
-            }
+              });
+            };
         </script>
 
 
         <footer id="footer" class="text-center">
-            Project &copy;2019 Shiyun Huang, Brandon Foltz, Choekgi Kalsang, Dennis Uritsky, Kaitlin O'Malley, Stephen Epler, Olivia Chen, Bihn Nguyen
+            Project &copy;2019 Shiyun Huang, Brandon Foltz, Choekgi Kalsang, Dennis Uritsky, Kaitlin O'Malley, Stephen Epler, Olivia Chen, Binh Nguyen
         </footer>
-
     </body>
 </html>

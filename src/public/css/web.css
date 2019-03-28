@@ -159,6 +159,6 @@ h6 {
     margin-top: 50px;
 }
 
-.ocr-result {
+.ocr-result, .progress-msg {
     color: #fff;
 }
