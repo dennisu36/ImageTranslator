@@ -1,3 +1,37 @@
+function initializeImageTranslateApp() {
+    let img = document.getElementById("myImage");
+    img.onload = function() {
+
+        //draws uploaded img on canvas
+        var canvas = document.getElementById("myCanvas");
+        var context = canvas.getContext("2d");
+        var img = document.getElementById("myImage");
+        var width = img.width;
+        var height = img.height;
+        canvas.width = width;
+        canvas.height = height;
+        context.drawImage(img, 0, 0);
+
+        //performs ocr
+        console.log("loaded...", "$$$$");
+        Tesseract.recognize(img).progress((progress) => {
+            console.log(progress, "$$$$");
+            if (progress.hasOwnProperty('progress')) {
+                $('#progress').text(progress.status + ": " + (progress.progress * 100).toFixed(0) + " %");
+            } else {
+                $('#progress').text(progress.status);
+            }
+        }).then((result) => {
+            console.log(result, "$$$$");
+
+            //TODO the output text should go in a textbox object on the page so that the user can read & select it more easily.
+            $('#result').text(result.text);
+            handleOCRResult(result);
+
+        });
+    }
+}
+
 var validTypes = ['jpg', 'jpeg', 'png', 'pdf'];
 function readURL(input) {
     if (input.files && input.files[0]) {

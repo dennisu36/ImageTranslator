@@ -88,39 +88,7 @@
         <script src="https://cdn.rawgit.com/naptha/tesseract.js/0.2.0/dist/tesseract.js"></script>
 
         <script>
-            //TODO this code should go in web.js so all the JS is in one place. Maybe we call an "initialization" function here but that's it.
-            //just better to keep all the code in one place so we know where to look.
-	    let img = document.getElementById("myImage")
-            img.onload = function() {
-
-		//draws uploaded img on canvas
-		var canvas = document.getElementById("myCanvas");
-        	var context = canvas.getContext("2d");
-            	var img = document.getElementById("myImage");
-	    	var width = img.width;
-            	var height = img.height;
-            	canvas.width = width;
-	    	canvas.height = height;
-            	context.drawImage(img, 0, 0);
-
-		//performs ocr
-                console.log("loaded...", "$$$$");
-                Tesseract.recognize(img).progress((progress) => {
-                    console.log(progress, "$$$$");
-                    if (progress.hasOwnProperty('progress')) {
-                        $('#progress').text(progress.status + ": " + (progress.progress * 100).toFixed(0) + " %");
-                    } else {
-                        $('#progress').text(progress.status);
-                    }
-                }).then((result) => {
-                    console.log(result, "$$$$");
-
-                    //TODO the output text should go in a textbox object on the page so that the user can read & select it more easily.
-                    $('#result').text(result.text);
-                    handleOCRResult(result);
-
-                });
-            }
+            initializeImageTranslateApp();
         </script>
 
 
