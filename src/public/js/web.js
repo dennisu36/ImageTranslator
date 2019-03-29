@@ -103,33 +103,33 @@ async function translateReq(textList) {
     return res;
 }
 
-renderText(ocrInput, X, Y, textboxWidth, textboxHeight){
+function renderText(ocrInput, X, Y, textboxWidth, textboxHeight) {
 	
-	var canvas = new fabric.Canvas('canvas');
+    var canvas = new fabric.Canvas('canvas');
 
-        // load image
-	var imgElement = document.getElementById("myImage");
-	var imgInstance = new fabric.Image(imgElement,{
-		left: 0,
-		top: 0
-            });
-    
-        // create text
-        var text = new fabric.Textbox(ocrInput, {
-            left: X,
-            top: Y,
-            textboxWidth = width,
-            textboxHeight = height,
-            fontSize: 15,
-            fontFamily: 'Verdana',
-            fill: 'white'
-        });
+    // load image
+    var imgElement = document.getElementById("myImage");
+    var imgInstance = new fabric.Image(imgElement,{
+        left: 0,
+        top: 0
+    });
 
-        // add image and text to a group
-        var group = new fabric.Group([imgInstance, text], {
-            left: 0,
-            top: 0
-        });
+    // create text
+    var text = new fabric.Textbox(ocrInput, {
+        left: X,
+        top: Y,
+        width: textboxWidth,
+        height: textboxHeight,
+        fontSize: 15,
+        fontFamily: 'Verdana',
+        fill: 'white'
+    });
+
+    // add image and text to a group
+    var group = new fabric.Group([imgInstance, text], {
+        left: 0,
+        top: 0
+    });
     
     // add the group to canvas
     canvas.add(group);
