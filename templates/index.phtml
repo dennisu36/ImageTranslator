@@ -16,7 +16,7 @@
     <body class="bg">
         <h1 class="text-center">Image Translate: Quickly translate your images</h1>
 
-        <div class="file-upload">
+     <div class="file-upload">
             <div class="image-upload-wrap">
                 <input class="file-upload-input" type='file' onchange="readURL(this);" accept="image/*, .pdf" />
                 <div class="drag-text">
@@ -25,9 +25,10 @@
             </div><!-- end image-upload-wrap -->
 
             <div class="file-upload-content">
-
                 <!-- [Task 1.2] change this img to a canvas and ensure existing features still work correctly. -->
-                <img class="file-upload-image" src="#" id="myImage"/>
+                <canvas id="myCanvas" width="500" height="500">
+                    <img class="file-upload-image" src="#" id="myImage" max-width="500" max-height="500">
+                </canvas>
                 <div class="image-title-wrap">
                     <button type="button" onclick="removeUpload()" class="remove-image">Remove <span class="image-title">Uploaded Image</span></button>
 
@@ -42,7 +43,8 @@
                     </div><!-- end container -->
 
                 </div><!-- end image-title-wrap -->
-            </div><!-- end file-upload-content -->
+	   </div><!-- end file-upload-content -->
+
 
             <div class="file-upload-controls">
                 <div class="language-select-div">
@@ -71,13 +73,13 @@
                         <option value="russian">Russian</option>
                         <option value="vietnamese">Vietnamese</option>
                     </select>
-                </div>
+                </div><!-- end language-select-div -->
                 <div class="get-translation-div">
                     <button id="get-translation-button">Get Translation</button>
-                </div>
-            </div>
+                </div><!-- end get-translation-div -->
+            </div><!-- end file-upload-controls -->
 
-        </div><!-- end file-upload -->
+     </div><!-- end file-upload -->
 
         <script class="jsbin" src="https://ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js"></script>
         <script src="js/fabric.js"></script>
@@ -88,26 +90,37 @@
         <script>
             //TODO this code should go in web.js so all the JS is in one place. Maybe we call an "initialization" function here but that's it.
             //just better to keep all the code in one place so we know where to look.
-            let img = document.getElementById("myImage");
-            img.onload = function () {
-              console.log("loaded...", "$$$$");
-              Tesseract.recognize(img).progress((progress) => {
-                console.log(progress, "$$$$");
-                if (progress.hasOwnProperty('progress')) {
-                  $('#progress').text(progress.status + ": " + (progress.progress * 100).toFixed(0) + " %");
-                } else {
-                  $('#progress').text(progress.status);
-                }
-              }).then((result) => {
-                $('#progress').text("");
-                console.log(result, "$$$$");
+	    let img = document.getElementById("myImage")
+            img.onload = function() {
 
-                //TODO the output text should go in a textbox object on the page so that the user can read & select it more easily.
-                $('#result').text(result.text);
-                handleOCRResult(result);
+		//draws uploaded img on canvas
+		var canvas = document.getElementById("myCanvas");
+        	var context = canvas.getContext("2d");
+            	var img = document.getElementById("myImage");
+	    	var width = img.width;
+            	var height = img.height;
+            	canvas.width = width;
+	    	canvas.height = height;
+            	context.drawImage(img, 0, 0);
 
-              });
-            };
+		//performs ocr
+                console.log("loaded...", "$$$$");
+                Tesseract.recognize(img).progress((progress) => {
+                    console.log(progress, "$$$$");
+                    if (progress.hasOwnProperty('progress')) {
+                        $('#progress').text(progress.status + ": " + (progress.progress * 100).toFixed(0) + " %");
+                    } else {
+                        $('#progress').text(progress.status);
+                    }
+                }).then((result) => {
+                    console.log(result, "$$$$");
+
+                    //TODO the output text should go in a textbox object on the page so that the user can read & select it more easily.
+                    $('#result').text(result.text);
+                    handleOCRResult(result);
+
+                });
+            }
         </script>
 
 
