@@ -121,7 +121,7 @@ function handleOCRResult(result) {
             destination_language: 'english',
             translated_text: 'War is bad'
           }
-        ], result);
+        ], boundingBoxes);
     })
     .catch(error => {
         console.error(error);
@@ -170,15 +170,14 @@ async function translateReq(textList) {
     return res;
 }
 
-async function handleServerResponse(textList, OCRResult) {
+async function handleServerResponse(textList, boundingBoxes) {
   var i;
   for (i = 0; i < textList.length; i++) {
     var text = textList[i];
+    var bbox = boundingBoxes[text.id];
     console.log(text.translated_text);
-    var bbox = OCRResult.lines[text.id].bbox;
     console.log(bbox);
-    // renderText() doesn't exist yet.
-    // renderText(text.translated_text, bbox.x0, bbox.x1, bbox.y0, bbox.y1);
+    renderText(text.translated_text, bbox.x0, bbox.y0, bbox.x1 - bbox.x0, bbox.y1 - bbox.y0);
   }
 }
 
@@ -213,4 +212,3 @@ function renderText(ocrInput, X, Y, textboxWidth, textboxHeight) {
     // add the group to canvas
     canvas.add(group);
 }
-
