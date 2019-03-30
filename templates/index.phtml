@@ -26,7 +26,7 @@
 
             <div class="file-upload-content">
                 <!-- [Task 1.2] change this img to a canvas and ensure existing features still work correctly. -->
-                <canvas id="myCanvas" width="500" height="500">
+                <canvas id="myCanvas" width="1000" height="1000">
                     <img class="file-upload-image" src="#" id="myImage" max-width="500" max-height="500">
                 </canvas>
                 <div class="image-title-wrap">
@@ -88,7 +88,8 @@
         <script src="https://cdn.rawgit.com/naptha/tesseract.js/0.2.0/dist/tesseract.js"></script>
 
         <script>
-            initializeImageTranslateApp();
+            //imageTranslateApp variable is global and we'll use it to store state/modify the page
+            imageTranslateApp = initializeImageTranslateApp();
         </script>
 
 

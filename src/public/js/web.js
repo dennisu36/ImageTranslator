@@ -1,20 +1,22 @@
 function initializeImageTranslateApp() {
-    let img = document.getElementById("myImage");
-    img.onload = function() {
-
-        //draws uploaded img on canvas
+    let App = {
+        image: document.getElementById("myImage"),
+        canvas: new fabric.StaticCanvas('myCanvas') //don't need interactivity that regular fabric.Canvas provides
+    };
+    
+    App.image.onload = function() {
         var canvas = document.getElementById("myCanvas");
-        var context = canvas.getContext("2d");
-        var img = document.getElementById("myImage");
+        var img = App.image;
         var width = img.width;
         var height = img.height;
-        canvas.width = width;
-        canvas.height = height;
-        context.drawImage(img, 0, 0);
+        canvas.style.width = img.width;
+        canvas.style.height = img.height;
+
+        renderImage(App.image, 0, 0, App.image.width, App.image.height);
 
         //performs ocr
         console.log("loaded...", "$$$$");
-        Tesseract.recognize(img).progress((progress) => {
+        Tesseract.recognize(App.image).progress((progress) => {
             console.log(progress, "$$$$");
             if (progress.hasOwnProperty('progress')) {
                 $('#progress').text(progress.status + ": " + (progress.progress * 100).toFixed(0) + " %");
@@ -23,13 +25,13 @@ function initializeImageTranslateApp() {
             }
         }).then((result) => {
             console.log(result, "$$$$");
-
-            //TODO the output text should go in a textbox object on the page so that the user can read & select it more easily.
             $('#result').text(result.text);
             handleOCRResult(result);
 
         });
     }
+    
+    return App;
 }
 
 var validTypes = ['jpg', 'jpeg', 'png', 'pdf'];
@@ -73,14 +75,8 @@ $('.image-upload-wrap').bind('dragleave', function () {
     $('.image-upload-wrap').removeClass('image-dropping');
 });
 
-    
-//[Task 4]: for Stephen.
-//TODO pass the OCR result here and process the detected segments appropriately.
+//Pass the OCR result here and process the detected segments appropriately.
 function handleOCRResult(result) {
-    //This is boilerplate that sets up a translation request for the server
-    
-    //TODO populate the request with data according to what was found in the OCR result (passed as parameter)
-
     const destLang = document.getElementById('language-dest-select').value;
     const srcLang = document.getElementById('language-src-select').value;
 
@@ -108,21 +104,8 @@ function handleOCRResult(result) {
     translateReq(jsonRequestData)
       .then(translatedText => {
         console.log(translatedText);
-        //window.alert(translatedText.text);
 
-        //[Task 6]: for Binh
-        //TODO render the text back on the Canvas corresponding to where it came from
-        //-> related, should correspond to ID number which is associated with
-        //-> blocks of text detected by tesseract.js.
-
-        handleServerResponse([
-          {
-            id: 1,
-            source_language: 'latin',
-            destination_language: 'english',
-            translated_text: 'War is bad'
-          }
-        ], boundingBoxes);
+        handleServerResponse(translatedText, boundingBoxes);
     })
     .catch(error => {
         console.error(error);
@@ -178,38 +161,43 @@ async function handleServerResponse(textList, boundingBoxes) {
     var bbox = boundingBoxes[text.id];
     console.log(text.translated_text);
     console.log(bbox);
-    renderText(text.translated_text, bbox.x0, bbox.y0, bbox.x1 - bbox.x0, bbox.y1 - bbox.y0);
+    var width = bbox.x1 - bbox.x0;
+    var height = bbox.y1 - bbox.y0;
+    renderText(text.translated_text, bbox.x0, bbox.y0, width, height);
   }
 }
 
-function renderText(ocrInput, X, Y, textboxWidth, textboxHeight) {
-	
-    var canvas = new fabric.Canvas('canvas');
-
-    // load image
-    var imgElement = document.getElementById("myImage");
-    var imgInstance = new fabric.Image(imgElement,{
+function renderImage(imgElement, X, Y, width, height) {
+    var imgInstance = new fabric.Image(imgElement, {
         left: 0,
         top: 0
     });
+    imageTranslateApp.canvas.add(imgInstance);
+}
 
-    // create text
-    var text = new fabric.Textbox(ocrInput, {
+function renderText(textInput, X, Y, textboxWidth, textboxHeight) {
+    console.log(textInput + " at " + X + "," + Y + " width: " + textboxWidth + " height: " + textboxHeight);
+
+    //render a background rect in black
+    var rect = new fabric.Rect({
         left: X,
         top: Y,
         width: textboxWidth,
         height: textboxHeight,
-        fontSize: 15,
-        fontFamily: 'Verdana',
+        fill: 'black'
+    });
+
+    // create text
+    var text = new fabric.Text(textInput, {
+        left: X,
+        top: Y,
+        width: textboxWidth,
+        height: textboxHeight,
+        fontSize: 32,
+        //fontFamily: 'Verdana',
         fill: 'white'
     });
 
-    // add image and text to a group
-    var group = new fabric.Group([imgInstance, text], {
-        left: 0,
-        top: 0
-    });
-    
-    // add the group to canvas
-    canvas.add(group);
+    imageTranslateApp.canvas.add(rect);
+    imageTranslateApp.canvas.add(text);
 }
