@@ -2,6 +2,13 @@ body {
     font-family: sans-serif;
     background-color: #fff;
     position: relative;
+    height:100%;
+}
+
+myCanvas {
+    position:absolute;
+    width:100%;
+    height:100%;
 }
 
 .bg { 
@@ -159,6 +166,13 @@ h6 {
     margin-top: 50px;
 }
 
-.ocr-result {
+.ocr-result, .progress-msg {
     color: #fff;
+}
+
+#myCanvas {
+    max-height: 500px;
+    max-width: 500px;
+    margin: auto;
+    padding: 20px;
 }
