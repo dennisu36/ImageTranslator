@@ -46,7 +46,7 @@ class TranslationRequestValidator {
 
         foreach ($translateArray['translate'] as $translationBlockKey => $translationBlock) {
             foreach ($requiredKeys as $requiredKey) {
-                if (!array_key_exists($requiredKey, $translationBlock) || empty($translationBlock[$requiredKey])) {
+                if (!array_key_exists($requiredKey, $translationBlock) ) {//|| empty($translationBlock[$requiredKey])) {
                     $translateArray['translate'][strval($translationBlockKey)]['errors'][$requiredKey] = "Key required.";
                 } else if (!is_string($translationBlock[$requiredKey]) && $requiredKey != 'id') {
                     $translateArray['translate'][strval($translationBlockKey)]['errors'][$requiredKey] = "Value must be string.";

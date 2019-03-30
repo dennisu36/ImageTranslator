@@ -97,17 +97,18 @@ function handleOCRResult(result) {
       obj.id = index;
       obj.text = line.text;
       obj.source_language = srcLang;
-      obj.destination_langauge = destLang;
+      obj.destination_language = destLang;
       return obj;
     });
 
     console.log(boundingBoxes);
     console.log(json);
+    jsonRequestData = {translate: json}; //Need top-level translate key
 
-    translateReq(json)
+    translateReq(jsonRequestData)
       .then(translatedText => {
         console.log(translatedText);
-        window.alert(translatedText.text);
+        //window.alert(translatedText.text);
 
         //[Task 6]: for Binh
         //TODO render the text back on the Canvas corresponding to where it came from
