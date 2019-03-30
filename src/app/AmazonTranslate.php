@@ -12,6 +12,6 @@ use App\TranslatorInterface;
 class AmazonTranslate implements TranslatorInterface {
 
     public function getTranslation($translatorInput = []) {
-        return ["text" => "this is a stub"];
+        return $translatorInput; //just send back what we received
     }
 }

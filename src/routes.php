@@ -21,16 +21,14 @@ $app->post('/translate', function (Request $request, Response $response, array $
 
     /* TODO Validate the parsed array to ensure all the required fields are there
      * if the array is not valid, return JSON to the client with 'error' field(s) populated. */
-    $translateRequestArray = null;
-    if (TranslationRequestValidator::is_translate_array_valid($translateRequestArray) == false) {
-        $errorsArray = TranslationRequestValidator::get_translate_array_errors($translateRequestArray);
+    if (TranslationRequestValidator::isTranslateArrayValid($translateRequestArray) == false) {
+        $errorsArray = TranslationRequestValidator::getTranslateArrayErrors($translateRequestArray);
         return $response->withJson($errorsArray, 400);
     }
 
     /* TODO Pass the validated translation request array to the AmazonTranslate API */
     $translateApi = new AmazonTranslate();
-    $translationRequest = [];
-    $translationResult = $translateApi->getTranslation($translationRequest);
+    $translationResult = $translateApi->getTranslation($translateRequestArray['translate']);
 
     return $response->withJson($translationResult, 200);
 });

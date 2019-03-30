@@ -9,9 +9,9 @@ namespace App;
  */
 class TranslationRequestValidator {
 
-    public static function get_translate_array_errors($translateArray) {
-        //echo "Called the function";
-        /*$errorExample = [
+    public static function getTranslateArrayErrors($translateArray = []) {
+        /*
+        $errorExample = [
             "translate" => [
                 [
                     "id"=> 1,
@@ -31,25 +31,52 @@ class TranslationRequestValidator {
                 ]
             ]
         ];
+        */
 
-        $responseData = ["translate" => []];
+        //First check that the 'translate' key is present
+        if (!array_key_exists("translate", $translateArray) || empty($translateArray['translate'])) {
+            $translateArray['errors'] = [
+                'Missing key: translate'
+            ]; //no need to check for anything else since this is the first thing required
+            return $translateArray;
+        }
 
         //verify the integrity of the received translation request (all required keys are present)
         $requiredKeys = ['id', 'source_language', 'destination_language', 'text'];
 
-        //TODO FIXME this needs some work, it's causing 500 error in the tests
-        foreach ($translateRequest["translate"] as $translationBlockKey => $translationBlock) {
+        foreach ($translateArray['translate'] as $translationBlockKey => $translationBlock) {
             foreach ($requiredKeys as $requiredKey) {
-                if (!array_key_exists($requiredKey, $translationBlock) || empty($translateRequest[$key])) {
-                    $responseData[strval($translationBlockKey)]['errors'] []= 'Missing key: ' . $requiredKey;
+                if (!array_key_exists($requiredKey, $translationBlock) || empty($translationBlock[$requiredKey])) {
+                    $translateArray['translate'][strval($translationBlockKey)]['errors'][$requiredKey] = "Key required.";
+                } else if (!is_string($translationBlock[$requiredKey]) && $requiredKey != 'id') {
+                    $translateArray['translate'][strval($translationBlockKey)]['errors'][$requiredKey] = "Value must be string.";
                 }
             }
-        }*/
+        }
 
-        return [];
+        return $translateArray;
     }
 
-    public static function is_translate_array_valid($translateArray = []) {
-        return true;
+    public static function isTranslateArrayValid($translateArray = []) {
+        $translateArrayWithErrors = TranslationRequestValidator::getTranslateArrayErrors($translateArray);
+        if (TranslationRequestValidator::recursiveFind($translateArrayWithErrors, 'errors') === null) {
+            return true;
+        }
+        return false;
+    }
+
+    private static function recursiveFind(array $haystack, $needle)
+    {
+        $iterator  = new \RecursiveArrayIterator($haystack);
+        $recursive = new \RecursiveIteratorIterator(
+            $iterator,
+            \RecursiveIteratorIterator::SELF_FIRST
+        );
+        foreach ($recursive as $key => $value) {
+            if ($key === $needle) {
+                return $value;
+            }
+        }
+        return null;
     }
 }
