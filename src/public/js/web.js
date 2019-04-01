@@ -1,22 +1,23 @@
 function initializeImageTranslateApp() {
-    let App = {
-        image: document.getElementById("myImage"),
-        canvas: new fabric.StaticCanvas('myCanvas') //don't need interactivity that regular fabric.Canvas provides
-    };
-    
-    App.image.onload = function() {
-        var canvas = document.getElementById("myCanvas");
-        var img = App.image;
-        var width = img.width;
-        var height = img.height;
-        canvas.style.width = img.width;
-        canvas.style.height = img.height;
+    const image = document.getElementById('myImage');
+    const canvas = new fabric.StaticCanvas('myCanvas');
+    canvas.setHeight(600);
+    canvas.setWidth(600);
 
-        renderImage(App.image, 0, 0, App.image.width, App.image.height);
+    
+    image.onload = function() {
+
+        var fImage = new fabric.Image(image);
+        fImage.scaleToWidth(canvas.getWidth());
+        fImage.scaleToHeight(canvas.getHeight());
+        canvas.add(fImage);
 
         //performs ocr
         console.log("loaded...", "$$$$");
-        Tesseract.recognize(App.image).progress((progress) => {
+        
+        Tesseract.recognize(image, {
+            tessedit_pageseg_mode: 1
+        }).progress((progress) => {
             console.log(progress, "$$$$");
             if (progress.hasOwnProperty('progress')) {
                 $('#progress').text(progress.status + ": " + (progress.progress * 100).toFixed(0) + " %");
@@ -30,8 +31,7 @@ function initializeImageTranslateApp() {
 
         });
     }
-    
-    return App;
+    return {image: image, canvas: canvas};
 }
 
 var validTypes = ['jpg', 'jpeg', 'png', 'pdf'];
@@ -167,13 +167,6 @@ async function handleServerResponse(textList, boundingBoxes) {
   }
 }
 
-function renderImage(imgElement, X, Y, width, height) {
-    var imgInstance = new fabric.Image(imgElement, {
-        left: 0,
-        top: 0
-    });
-    imageTranslateApp.canvas.add(imgInstance);
-}
 
 function renderText(textInput, X, Y, textboxWidth, textboxHeight) {
     console.log(textInput + " at " + X + "," + Y + " width: " + textboxWidth + " height: " + textboxHeight);
