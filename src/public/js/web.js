@@ -147,3 +147,4 @@ async function handleServerResponse(textList, OCRResult) {
     // renderText(text.translated_text, bbox.x0, bbox.x1, bbox.y0, bbox.y1);
   }
 }
+
