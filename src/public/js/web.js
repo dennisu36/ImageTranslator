@@ -42,10 +42,36 @@ function readURL(input) {
         if (isSuccess) {
             var reader = new FileReader();
             if(extension == 'pdf'){
-                alert("TODO convert the PDF to an image and load it into the image container.");
+/*
+  pdfjsLib.getDocument(input).then(doc => {console.log("This file has "doc._pdfInfo.numPages + "pages");
+                
+               doc.getPage(1).then(page => {
+                   var myCanvas = document.getElementById("my_Canvas");
+                   var context = myCanvas.getContext("2d");
+                   
+                   var viewport = page.getViewport(1);
+                   myCanvas.width = viewport.width;
+                   myCanvas.height = viewport.height;
+                   
+                   page.render({
+                       canvasContext: context,
+                       viewport: viewport
+                   });
+               });                                               
+                                                        
+                                                             
+                                                             
+            });
+
+
+	    */
+
+
+
+             //   alert("TODO convert the PDF to an image and load it into the image container.");
             } else if (extension == 'jpg', 'png', 'jpeg') {
                 //alert('You have inserted an image.');
-                //Nothing else to do here because the image .onload function initiates OCR
+               //Nothing else to do here because the image .onload function initiates OCR
             }
             reader.onload = function(e) {
                 $('.image-upload-wrap').hide();
