@@ -27,6 +27,25 @@ class RoutesTest extends BaseTestCase
         $this->assertEquals(200, $response->getStatusCode());
     }
 
+    /**
+     * Try translating an actual set of strings in a different language
+     */
+    public function testTranslation()
+    {
+        $translationArray = [
+            [
+                'id' => 1,
+                'source_language' => 'auto',
+                'destination_language' => 'english',
+                'text' => 'ما اسمك'
+            ]
+        ];
+
+        $response = $this->runApp('POST', '/translate', $translationArray);
+
+        $this->assertEquals(200, $response->getStatusCode());
+    }
+
     public function testGoodResponse()
     {
         $response = $this->runApp('GET', '/good');
