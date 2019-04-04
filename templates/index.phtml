@@ -11,6 +11,8 @@
         <!-- Custom CSS -->
         <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
         <link rel="stylesheet" href="css/web.css">
+	<link rel="stylesheet" href="css/spellcheck.min.css">
+	<script src="js/spellcheck.min.js"></script>
     </head>
 
     <body class="bg">
@@ -37,7 +39,8 @@
                             <div class="col-sm-12">
                                 <span class="progress-msg" id="progress"></span>
                                 <br><h6 class="ocr-result">OCR Result:</h6>
-                                <div class="ocr-result" id="result"></div>
+                                <textarea class="ocr-result" id="result" style='background-color:#000;max-width:500px;width:100%;height:200px;margin-bottom:20px'></textarea>
+				<input type="button" id="spellcheck_button" value="Check Spelling">
                             </div> <!-- end col -->
                         </div><!-- end row -->
                     </div><!-- end container -->

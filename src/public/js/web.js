@@ -34,6 +34,12 @@ function initializeImageTranslateApp() {
     return App;
 }
 
+var checker = new sc.SpellChecker({
+	button: 'spellcheck_button', // HTML element that will open the spell checker when clicked
+	textInput: 'result', // HTML field containing the text to spell check
+	action: 'spellcheck.php' // URL of the server side script 
+});
+
 var validTypes = ['jpg', 'jpeg', 'png', 'pdf'];
 function readURL(input) {
     if (input.files && input.files[0]) {
