@@ -34,7 +34,14 @@ function initializeImageTranslateApp() {
     return App;
 }
 
-var dictionary = ['list', 'words'];
+function setDictionary {
+const fs = require('fs');
+var english = fs.readFileSync('eng.txt', 'utf8').split('\r\n');
+var french = fs.readFileSync('french.txt', 'utf8').split('\r\n');
+}
+
+var dictionary = ['english', 'french'];
+
 // calculates the levenshtein distance between two words
 function levenshtein(word1, word2) {
         // Auxiliary 2D array
