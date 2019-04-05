@@ -12,7 +12,6 @@ use Aws\Exception\AwsException;
  * @author jaywalker
  */
 class AmazonTranslate implements TranslatorInterface {
-
     //This function's purpose is to abbreviate the language names as that is what the API takes.
     private function convertLanguageToAbbrev($translatorIn){
 
@@ -35,7 +34,9 @@ class AmazonTranslate implements TranslatorInterface {
             'russian' => 'ru',
             'spanish' => 'es',
             'swedish' => 'sv',
-            'turkish' => 'tr'
+            'turkish' => 'tr',
+            //TODO FIXME, not all languages are in the list.
+            //UNDEFINED INDEX FRENCH
         ];
 
         //Checks to see what the languages are. If auto is the initial language, it will keep it as auto.
@@ -53,7 +54,7 @@ class AmazonTranslate implements TranslatorInterface {
     }
 
     //This function gets the php array into the API and translates the text. Also returns the text in the end //print line
-    public function getTranslation($translatorIn) {
+    public function getTranslation($translatorIn = []) {
 
         $translatorIn = $this->convertLanguageToAbbrev($translatorIn);
 
