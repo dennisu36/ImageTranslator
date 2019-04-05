@@ -80,6 +80,27 @@ class RoutesTest extends BaseTestCase
 
     }
 
+    /**
+     * Try translating an actual set of strings in a different language
+     */
+    public function testTranslation()
+    {
+        $translationArray = [
+            'translate' => [
+                [
+                    'id' => 1,
+                    'source_language' => 'arabic',
+                    'destination_language' => 'english',
+                    'text' => 'ما اسمك'
+                ]
+            ]
+        ];
+
+        $response = $this->runApp('POST', '/translate', $translationArray);
+
+        $this->assertEquals(200, $response->getStatusCode());
+    }
+
 
     /**
      * This is just a generic test to make sure that we get a response back.
