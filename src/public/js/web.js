@@ -34,6 +34,31 @@ function initializeImageTranslateApp() {
     return App;
 }
 
+var dictionary = ['list', 'words'];
+// calculates the levenshtein distance between two words
+function levenshtein(word1, word2) {
+        // Auxiliary 2D array
+        var arr = new Array(word1.length+1);
+        for(var i=0 ; i<word1.length+1 ; i++)
+            arr[i] = new Array(word2.length+1);
+    
+        // Algorithm
+        for(var i=0 ; i<=word1.length ; i++)
+            for(var j=0 ; j<=word2.length ; j++)
+                arr[i][j] = 0;
+        for(var i=0 ; i<=word1.length ; i++)
+            arr[i][0] = i;
+        for(var i=0 ; i<=word2.length ; i++)
+            arr[0][i] = i;
+    
+        for(var i=1 ; i<=word1.length ; i++)
+            for(var j=1 ; j<=word2.length ; j++)
+                arr[i][j] = Math.min(arr[i-1][j-1] + (word1.charAt(i-1)==word2.charAt(j-1) ? 0 : 1), arr[i-1][j]+1, arr[i][j-1]+1);
+    
+        // Final answer
+        return arr[word1.length][word2.length].toString(10);
+}
+
 var validTypes = ['jpg', 'jpeg', 'png', 'pdf'];
 function readURL(input) {
     if (input.files && input.files[0]) {
