@@ -16,7 +16,37 @@ function initializeImageTranslateApp() {
 
 	//make Tesseract match with source language that is selected
 	const srcLang = document.getElementById('language-src-select').value;
-        
+        var selLang ='';
+	    if(srcLang == 'chinese'){
+		    selLang = 'chi_sim';
+	    }else if(srcLang == 'french'){
+		    selLang ='fra';
+	    }else{
+		    selLang = 'eng';
+	    }
+
+
+
+	  console.log("loaded...", "$$$$");
+          Tesseract.recognize(App.image,{
+	  	lang: selLang
+	  }).progress((progress) => {
+          	console.log(progress, "$$$$");
+                if (progress.hasOwnProperty('progress')) {
+                        $('#progress').text(progress.status + ": " + (progress.progress * 100).toFixed(0) + " %");
+                } else {
+                        $('#progress').text(progress.status);
+                }
+          }).then((result) => {
+                console.log(result, "$$$$");
+                $('#result').text(result.text);
+                handleOCRResult(result);
+
+          });
+
+
+
+	/* 
 	if(srcLang == 'chinese'){
 		console.log("loaded...","$$$$");
 		Tesseract.recognize(App.image,{
@@ -68,7 +98,7 @@ function initializeImageTranslateApp() {
             		handleOCRResult(result);
 
        	 	});
-    	}
+    	}*/
     }
     return App;
 }
