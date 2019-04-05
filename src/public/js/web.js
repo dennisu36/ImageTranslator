@@ -34,10 +34,18 @@ function initializeImageTranslateApp() {
 			$('#result').text(result.text);
 			handleOCRResult(result);
 		});
-	}else if(srcLanguage == 'french'){
-                Tesseract.recognize(App.image,{
+	}else if(srcLang == 'french'){
+                console.log("loaded...","$$$$");
+		Tesseract.recognize(App.image,{
                         lang: 'fra'
-                })
+                }).progress((progress) =>{
+                         console.log(progress, "$$$$");
+                if (progress.hasOwnProperty('progress')) {
+                        $('#progress').text(progress.status + ": " + (progress.progress * 100).toFixed(0) + " %");
+                } else {
+                        $('#progress').text(progress.status);
+                }
+		})
                 .then(function(result){
                         console.log(result);
                         $('#result').text(result.text);
