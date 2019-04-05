@@ -1,3 +1,70 @@
+function initializeImageTranslateApp() {
+    let App = {
+        image: document.getElementById("myImage"),
+        canvas: new fabric.StaticCanvas('myCanvas') //don't need interactivity that regular fabric.Canvas provides
+    };
+    
+    App.image.onload = function() {
+        var canvas = document.getElementById("myCanvas");
+        var img = App.image;
+        var width = img.width;
+        var height = img.height;
+        canvas.style.width = img.width;
+        canvas.style.height = img.height;
+
+        renderImage(App.image, 0, 0, App.image.width, App.image.height);
+
+	//make Tesseract match with source language that is selected
+	const srcLang = document.getElementById('language-src-select').value;
+        
+	if(srcLang == 'chinese'){
+		console.log("loaded...","$$$$");
+		Tesseract.recognize(App.image,{
+			lang: 'chi_sim'
+		}).progress((progress) =>{
+			 console.log(progress, "$$$$");
+                if (progress.hasOwnProperty('progress')) {
+                        $('#progress').text(progress.status + ": " + (progress.progress * 100).toFixed(0) + " %");
+                } else {
+                        $('#progress').text(progress.status);
+                }
+                })
+		.then(function(result){
+			console.log(result);
+			$('#result').text(result.text);
+			handleOCRResult(result);
+		});
+	}else if(srcLanguage == 'french'){
+                Tesseract.recognize(App.image,{
+                        lang: 'fra'
+                })
+                .then(function(result){
+                        console.log(result);
+                        $('#result').text(result.text);
+                        handleOCRResult(result);
+                });
+	
+	} else{
+	    //performs ocr
+        	console.log("loaded...", "$$$$");
+        	Tesseract.recognize(App.image).progress((progress) => {
+            	console.log(progress, "$$$$");
+            	if (progress.hasOwnProperty('progress')) {
+                	$('#progress').text(progress.status + ": " + (progress.progress * 100).toFixed(0) + " %");
+            	} else {
+                	$('#progress').text(progress.status);
+            	}
+        	}).then((result) => {
+            		console.log(result, "$$$$");
+            		$('#result').text(result.text);
+            		handleOCRResult(result);
+
+       	 	});
+    	}
+    }
+    return App;
+}
+
 var validTypes = ['jpg', 'jpeg', 'png', 'pdf'];
 function readURL(input) {
     if (input.files && input.files[0]) {
@@ -39,14 +106,8 @@ $('.image-upload-wrap').bind('dragleave', function () {
     $('.image-upload-wrap').removeClass('image-dropping');
 });
 
-    
-//[Task 4]: for Stephen.
-//TODO pass the OCR result here and process the detected segments appropriately.
+//Pass the OCR result here and process the detected segments appropriately.
 function handleOCRResult(result) {
-    //This is boilerplate that sets up a translation request for the server
-    
-    //TODO populate the request with data according to what was found in the OCR result (passed as parameter)
-
     const destLang = document.getElementById('language-dest-select').value;
     const srcLang = document.getElementById('language-src-select').value;
 
@@ -63,31 +124,19 @@ function handleOCRResult(result) {
       obj.id = index;
       obj.text = line.text;
       obj.source_language = srcLang;
-      obj.destination_langauge = destLang;
+      obj.destination_language = destLang;
       return obj;
     });
 
     console.log(boundingBoxes);
     console.log(json);
+    jsonRequestData = {translate: json}; //Need top-level translate key
 
-    translateReq(json)
+    translateReq(jsonRequestData)
       .then(translatedText => {
         console.log(translatedText);
-        window.alert(translatedText.text);
 
-        //[Task 6]: for Binh
-        //TODO render the text back on the Canvas corresponding to where it came from
-        //-> related, should correspond to ID number which is associated with
-        //-> blocks of text detected by tesseract.js.
-
-        handleServerResponse([
-          {
-            id: 1,
-            source_language: 'latin',
-            destination_language: 'english',
-            translated_text: 'War is bad'
-          }
-        ], result);
+        handleServerResponse(translatedText, boundingBoxes);
     })
     .catch(error => {
         console.error(error);
@@ -136,15 +185,51 @@ async function translateReq(textList) {
     return res;
 }
 
-async function handleServerResponse(textList, OCRResult) {
+async function handleServerResponse(textList, boundingBoxes) {
   var i;
   for (i = 0; i < textList.length; i++) {
     var text = textList[i];
+    var bbox = boundingBoxes[text.id];
     console.log(text.translated_text);
-    var bbox = OCRResult.lines[text.id].bbox;
     console.log(bbox);
-    // renderText() doesn't exist yet.
-    // renderText(text.translated_text, bbox.x0, bbox.x1, bbox.y0, bbox.y1);
+    var width = bbox.x1 - bbox.x0;
+    var height = bbox.y1 - bbox.y0;
+    renderText(text.translated_text, bbox.x0, bbox.y0, width, height);
   }
+}
+
+function renderImage(imgElement, X, Y, width, height) {
+    var imgInstance = new fabric.Image(imgElement, {
+        left: 0,
+        top: 0
+    });
+    imageTranslateApp.canvas.add(imgInstance);
+}
+
+function renderText(textInput, X, Y, textboxWidth, textboxHeight) {
+    console.log(textInput + " at " + X + "," + Y + " width: " + textboxWidth + " height: " + textboxHeight);
+
+    //render a background rect in black
+    var rect = new fabric.Rect({
+        left: X,
+        top: Y,
+        width: textboxWidth,
+        height: textboxHeight,
+        fill: 'black'
+    });
+
+    // create text
+    var text = new fabric.Text(textInput, {
+        left: X,
+        top: Y,
+        width: textboxWidth,
+        height: textboxHeight,
+        fontSize: 32,
+        //fontFamily: 'Verdana',
+        fill: 'white'
+    });
+
+    imageTranslateApp.canvas.add(rect);
+    imageTranslateApp.canvas.add(text);
 }
 
