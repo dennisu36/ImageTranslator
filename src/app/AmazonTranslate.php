@@ -23,6 +23,7 @@ class AmazonTranslate implements TranslatorInterface {
             'dutch' => 'nl',
             'english' => 'en',
             'finnish' => 'fi',
+            'french' => 'fr',
             'german' => 'de',
             'hebrew' => 'he',
             'indonesian' => 'id',
@@ -35,8 +36,6 @@ class AmazonTranslate implements TranslatorInterface {
             'spanish' => 'es',
             'swedish' => 'sv',
             'turkish' => 'tr',
-            //TODO FIXME, not all languages are in the list.
-            //UNDEFINED INDEX FRENCH
         ];
 
         //Checks to see what the languages are. If auto is the initial language, it will keep it as auto.
@@ -58,7 +57,7 @@ class AmazonTranslate implements TranslatorInterface {
 
         $translatorIn = $this->convertLanguageToAbbrev($translatorIn);
 
-        $client = new Aws\Translate\TranslateClient([
+        $client = new TranslateClient([
             'profile' => 'default',
             'region' => 'us-east-2',
             'version' => '2017-07-01'
@@ -78,7 +77,7 @@ class AmazonTranslate implements TranslatorInterface {
                     'Text' => $value['text'],
                 ])['TranslatedText'];
             } catch (AwsException $e) {
-                echo $resultAry['error'] = $e->getMessage();
+                $resultAry['error'] = $e->getMessage();
             }
             array_push($translationResults, $resultAry);
         }

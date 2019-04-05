@@ -86,11 +86,13 @@ class RoutesTest extends BaseTestCase
     public function testTranslation()
     {
         $translationArray = [
-            [
-                'id' => 1,
-                'source_language' => 'auto',
-                'destination_language' => 'english',
-                'text' => 'ما اسمك'
+            'translate' => [
+                [
+                    'id' => 1,
+                    'source_language' => 'arabic',
+                    'destination_language' => 'english',
+                    'text' => 'ما اسمك'
+                ]
             ]
         ];
 
