@@ -14,23 +14,92 @@ function initializeImageTranslateApp() {
 
         renderImage(App.image, 0, 0, App.image.width, App.image.height);
 
-        //performs ocr
-        console.log("loaded...", "$$$$");
-        Tesseract.recognize(App.image).progress((progress) => {
-            console.log(progress, "$$$$");
-            if (progress.hasOwnProperty('progress')) {
-                $('#progress').text(progress.status + ": " + (progress.progress * 100).toFixed(0) + " %");
-            } else {
-                $('#progress').text(progress.status);
-            }
-        }).then((result) => {
-            console.log(result, "$$$$");
-            $('#result').text(result.text);
-            handleOCRResult(result);
+	//make Tesseract match with source language that is selected
+	const srcLang = document.getElementById('language-src-select').value;
+        var selLang ='';
+	    if(srcLang == 'chinese'){
+		    selLang = 'chi_sim';
+	    }else if(srcLang == 'french'){
+		    selLang ='fra';
+	    }else{
+		    selLang = 'eng';
+	    }
 
-        });
+
+
+	  console.log("loaded...", "$$$$");
+          Tesseract.recognize(App.image,{
+	  	lang: selLang
+	  }).progress((progress) => {
+          	console.log(progress, "$$$$");
+                if (progress.hasOwnProperty('progress')) {
+                        $('#progress').text(progress.status + ": " + (progress.progress * 100).toFixed(0) + " %");
+                } else {
+                        $('#progress').text(progress.status);
+                }
+          }).then((result) => {
+                console.log(result, "$$$$");
+                $('#result').text(result.text);
+                handleOCRResult(result);
+
+          });
+
+
+
+	/* 
+	if(srcLang == 'chinese'){
+		console.log("loaded...","$$$$");
+		Tesseract.recognize(App.image,{
+			lang: 'chi_sim'
+		}).progress((progress) =>{
+			 console.log(progress, "$$$$");
+                if (progress.hasOwnProperty('progress')) {
+                        $('#progress').text(progress.status + ": " + (progress.progress * 100).toFixed(0) + " %");
+                } else {
+                        $('#progress').text(progress.status);
+                }
+                })
+		.then(function(result){
+			console.log(result);
+			$('#result').text(result.text);
+			handleOCRResult(result);
+		});
+	}else if(srcLang == 'french'){
+                console.log("loaded...","$$$$");
+		Tesseract.recognize(App.image,{
+                        lang: 'fra'
+                }).progress((progress) =>{
+                         console.log(progress, "$$$$");
+                if (progress.hasOwnProperty('progress')) {
+                        $('#progress').text(progress.status + ": " + (progress.progress * 100).toFixed(0) + " %");
+                } else {
+                        $('#progress').text(progress.status);
+                }
+		})
+                .then(function(result){
+                        console.log(result);
+                        $('#result').text(result.text);
+                        handleOCRResult(result);
+                });
+	
+	} else{
+	    //performs ocr
+        	console.log("loaded...", "$$$$");
+        	Tesseract.recognize(App.image).progress((progress) => {
+            	console.log(progress, "$$$$");
+            	if (progress.hasOwnProperty('progress')) {
+                	$('#progress').text(progress.status + ": " + (progress.progress * 100).toFixed(0) + " %");
+            	} else {
+                	$('#progress').text(progress.status);
+            	}
+        	}).then((result) => {
+            		console.log(result, "$$$$");
+            		$('#result').text(result.text);
+            		handleOCRResult(result);
+
+       	 	});
+    	}*/
     }
-    
     return App;
 }
 
@@ -201,3 +270,4 @@ function renderText(textInput, X, Y, textboxWidth, textboxHeight) {
     imageTranslateApp.canvas.add(rect);
     imageTranslateApp.canvas.add(text);
 }
+
