@@ -170,6 +170,14 @@ async function handleServerResponse(textList, boundingBoxes) {
 
 function renderText(textInput, X, Y, textboxWidth, textboxHeight) {
     console.log(textInput + " at " + X + "," + Y + " width: " + textboxWidth + " height: " + textboxHeight);
+    
+    var fImage = imageTranslateApp.canvas.item(0);
+    var scaleX = fImage.scaleX;
+    var scaleY = fImage.scaleY;
+    X *= scaleX;
+    Y *= scaleY;
+    textboxWidth *= scaleX;
+    textboxHeight *= scaleY;
 
     //render a background rect in black
     var rect = new fabric.Rect({
