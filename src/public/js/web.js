@@ -26,14 +26,14 @@ function initializeImageTranslateApp() {
         }
 
         console.log("loaded...", "$$$$");
-        Tesseract.recognize(App.image,{
+        Tesseract.recognize(App.image, {
             lang: selLang
         }).progress((progress) => {
             console.log(progress, "$$$$");
             if (progress.hasOwnProperty('progress')) {
-                    $('#progress').text(progress.status + ": " + (progress.progress * 100).toFixed(0) + " %");
+                $('#progress').text(progress.status + ": " + (progress.progress * 100).toFixed(0) + " %");
             } else {
-                    $('#progress').text(progress.status);
+                $('#progress').text(progress.status);
             }
         }).then((result) => {
             console.log(result, "$$$$");
