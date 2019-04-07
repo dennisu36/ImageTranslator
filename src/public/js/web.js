@@ -17,88 +17,29 @@ function initializeImageTranslateApp() {
 	//make Tesseract match with source language that is selected
 	const srcLang = document.getElementById('language-src-select').value;
         var selLang ='';
-	    if(srcLang == 'chinese'){
-		    selLang = 'chi_sim';
-	    }else if(srcLang == 'french'){
-		    selLang ='fra';
-	    }else{
-		    selLang = 'eng';
-	    }
+        if (srcLang == 'chinese') {
+            selLang = 'chi_sim';
+        } else if (srcLang == 'french') {
+            selLang ='fra';
+        } else {
+            selLang = 'eng';
+        }
 
-
-
-	  console.log("loaded...", "$$$$");
-          Tesseract.recognize(App.image,{
-	  	lang: selLang
-	  }).progress((progress) => {
-          	console.log(progress, "$$$$");
-                if (progress.hasOwnProperty('progress')) {
-                        $('#progress').text(progress.status + ": " + (progress.progress * 100).toFixed(0) + " %");
-                } else {
-                        $('#progress').text(progress.status);
-                }
-          }).then((result) => {
-                console.log(result, "$$$$");
-                $('#result').text(result.text);
-                handleOCRResult(result);
-
-          });
-
-
-
-	/* 
-	if(srcLang == 'chinese'){
-		console.log("loaded...","$$$$");
-		Tesseract.recognize(App.image,{
-			lang: 'chi_sim'
-		}).progress((progress) =>{
-			 console.log(progress, "$$$$");
-                if (progress.hasOwnProperty('progress')) {
-                        $('#progress').text(progress.status + ": " + (progress.progress * 100).toFixed(0) + " %");
-                } else {
-                        $('#progress').text(progress.status);
-                }
-                })
-		.then(function(result){
-			console.log(result);
-			$('#result').text(result.text);
-			handleOCRResult(result);
-		});
-	}else if(srcLang == 'french'){
-                console.log("loaded...","$$$$");
-		Tesseract.recognize(App.image,{
-                        lang: 'fra'
-                }).progress((progress) =>{
-                         console.log(progress, "$$$$");
-                if (progress.hasOwnProperty('progress')) {
-                        $('#progress').text(progress.status + ": " + (progress.progress * 100).toFixed(0) + " %");
-                } else {
-                        $('#progress').text(progress.status);
-                }
-		})
-                .then(function(result){
-                        console.log(result);
-                        $('#result').text(result.text);
-                        handleOCRResult(result);
-                });
-	
-	} else{
-	    //performs ocr
-        	console.log("loaded...", "$$$$");
-        	Tesseract.recognize(App.image).progress((progress) => {
-            	console.log(progress, "$$$$");
-            	if (progress.hasOwnProperty('progress')) {
-                	$('#progress').text(progress.status + ": " + (progress.progress * 100).toFixed(0) + " %");
-            	} else {
-                	$('#progress').text(progress.status);
-            	}
-        	}).then((result) => {
-            		console.log(result, "$$$$");
-            		$('#result').text(result.text);
-            		handleOCRResult(result);
-
-       	 	});
-    	}*/
+        console.log("loaded...", "$$$$");
+        Tesseract.recognize(App.image,{
+            lang: selLang
+        }).progress((progress) => {
+            console.log(progress, "$$$$");
+            if (progress.hasOwnProperty('progress')) {
+                    $('#progress').text(progress.status + ": " + (progress.progress * 100).toFixed(0) + " %");
+            } else {
+                    $('#progress').text(progress.status);
+            }
+        }).then((result) => {
+            console.log(result, "$$$$");
+            $('#result').text(result.text);
+            handleOCRResult(result);
+        });
     }
     return App;
 }
@@ -131,9 +72,9 @@ function readURL(input) {
 }
 
 function removeUpload() {
-  $('.file-upload-input').replaceWith($('.file-upload-input').clone());
-  $('.file-upload-content').hide();
-  $('.image-upload-wrap').show();
+    $('.file-upload-input').replaceWith($('.file-upload-input').clone());
+    $('.file-upload-content').hide();
+    $('.image-upload-wrap').show();
 }
 
 $('.image-upload-wrap').bind('dragover', function () {
@@ -156,14 +97,14 @@ function handleOCRResult(result) {
 
     // Array.prototype.map function, return new array from lines array to be sent via Ajax.
     const json = result.lines.map((line, index) => {
-      boundingBoxes[index] = line.bbox;
+        boundingBoxes[index] = line.bbox;
 
-      const obj = {};
-      obj.id = index;
-      obj.text = line.text;
-      obj.source_language = srcLang;
-      obj.destination_language = destLang;
-      return obj;
+        const obj = {};
+        obj.id = index;
+        obj.text = line.text;
+        obj.source_language = srcLang;
+        obj.destination_language = destLang;
+        return obj;
     });
 
     console.log(boundingBoxes);
@@ -171,10 +112,9 @@ function handleOCRResult(result) {
     jsonRequestData = {translate: json}; //Need top-level translate key
 
     translateReq(jsonRequestData)
-      .then(translatedText => {
-        console.log(translatedText);
-
-        handleServerResponse(translatedText, boundingBoxes);
+        .then(translatedText => {
+            console.log(translatedText);
+            handleServerResponse(translatedText, boundingBoxes);
     })
     .catch(error => {
         console.error(error);
@@ -224,16 +164,16 @@ async function translateReq(textList) {
 }
 
 async function handleServerResponse(textList, boundingBoxes) {
-  var i;
-  for (i = 0; i < textList.length; i++) {
-    var text = textList[i];
-    var bbox = boundingBoxes[text.id];
-    console.log(text.translated_text);
-    console.log(bbox);
-    var width = bbox.x1 - bbox.x0;
-    var height = bbox.y1 - bbox.y0;
-    renderText(text.translated_text, bbox.x0, bbox.y0, width, height);
-  }
+    var i;
+    for (i = 0; i < textList.length; i++) {
+        var text = textList[i];
+        var bbox = boundingBoxes[text.id];
+        console.log(text.translated_text);
+        console.log(bbox);
+        var width = bbox.x1 - bbox.x0;
+        var height = bbox.y1 - bbox.y0;
+        renderText(text.translated_text, bbox.x0, bbox.y0, width, height);
+    }
 }
 
 function renderImage(imgElement, X, Y, width, height) {
