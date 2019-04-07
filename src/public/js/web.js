@@ -15,20 +15,25 @@ function initializeImageTranslateApp() {
         renderImage(App.image, 0, 0, App.image.width, App.image.height);
 
 	//make Tesseract match with source language that is selected
+        tessOptions = {};
 	const srcLang = document.getElementById('language-src-select').value;
-        var selLang ='';
         if (srcLang == 'chinese') {
-            selLang = 'chi_sim';
+            tessOptions.lang = 'chi_sim';
         } else if (srcLang == 'french') {
-            selLang ='fra';
+            tessOptions.lang ='fra';
         } else {
-            selLang = 'eng';
+            tessOptions.lang = 'eng';
+        }
+
+        if (tessOptions.lang == 'eng' || tessOptions.lang == 'fra') {
+            //This probably obviates the removeJunkText() function mostly, but I guess that can still
+            //get rid of stray consonants that aren't part of words.
+            tessOptions.tessedit_char_whitelist = "ABCDEFGHIJKLMNOPQRSTUVWYZabcdefghijklmnopqrstuvwxyz1234567890.?!"
         }
 
         console.log("loaded...", "$$$$");
-        Tesseract.recognize(App.image,{
-            lang: selLang
-        }).progress((progress) => {
+        Tesseract.recognize(App.image,tessOptions)
+        .progress((progress) => {
             console.log(progress, "$$$$");
             if (progress.hasOwnProperty('progress')) {
                     $('#progress').text(progress.status + ": " + (progress.progress * 100).toFixed(0) + " %");
@@ -37,7 +42,7 @@ function initializeImageTranslateApp() {
             }
         }).then((result) => {
             console.log(result, "$$$$");
-            $('#result').text(result.text);
+            $('#result').text(removeJunkText(result.text));
             handleOCRResult(result);
         });
     }
@@ -101,7 +106,7 @@ function handleOCRResult(result) {
 
         const obj = {};
         obj.id = index;
-        obj.text = line.text;
+        obj.text = removeJunkText(line.text);
         obj.source_language = srcLang;
         obj.destination_language = destLang;
         return obj;
@@ -209,5 +214,35 @@ function renderText(textInput, X, Y, textboxWidth, textboxHeight) {
 
     imageTranslateApp.canvas.add(rect);
     imageTranslateApp.canvas.add(text);
+}
+
+function removeJunkText(inString) {
+  /*
+     @desc
+     Removes stray/junk characters from the input string and returns the cleaned string.
+     This does make some assumptions about the intended content of the original text, so might not
+     be appropriate for all inputs.
+
+     @param string inString
+     A string to clean up.
+
+     @return string
+    */
+
+    let punctuation = ",./;'[]-=`";
+    let consonants = "qwrtyupsdfghjklzxcvbnm";
+    punctuation = punctuation.split('');
+    consonants = consonants.split(''); 
+    punctuation.forEach(function(element){
+        inString = inString.replace(" " + element + " ", " ");
+        inString = inString.replace(element + " ", " ");
+        inString = inString.replace(" " + element.toUpperCase() + " ", " ");
+        inString = inString.replace(element.toUpperCase() + " ", " ");
+    });
+    consonants.forEach(function(element){
+        inString = inString.replace(" " + element + " ", " ");
+        inString = inString.replace(" " + element.toUpperCase() + " ", " ");
+    });
+    return inString;
 }
 
