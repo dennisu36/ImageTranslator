@@ -8,8 +8,8 @@ function initializeImageTranslateApp() {
     image.onload = function() {
 
         var fImage = new fabric.Image(image);
-        fImage.scaleToWidth(canvas.getWidth());
         fImage.scaleToHeight(canvas.getHeight());
+        canvas.setWidth(fImage.getScaledWidth());
         canvas.add(fImage);
 
         //performs ocr
