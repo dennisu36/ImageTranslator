@@ -194,13 +194,13 @@ function renderText(textInput, X, Y, textboxWidth, textboxHeight) {
         top: Y,
         width: textboxWidth,
         height: textboxHeight,
-        fontFamily: 'Inconsolata',
+        fontFamily: 'Consolas',
         fill: 'white'
     });
     
-    var fontSizeVertical = textboxHeight * 0.75;
-    var fontSizeHorizontal = textboxWidth / textInput.length * 0.75;
-    text.fontSize = fontSizeVertical > fontSizeHorizontal ? fontSizeHorizontal : fontSizeVertical
+    var fontSizeVertical = textboxHeight;
+    var fontSizeHorizontal = textboxWidth / textInput.length / 0.55;
+    text.fontSize = fontSizeVertical > fontSizeHorizontal ? fontSizeHorizontal : fontSizeVertical;
 
     imageTranslateApp.canvas.add(rect);
     imageTranslateApp.canvas.add(text);
