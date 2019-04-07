@@ -194,10 +194,13 @@ function renderText(textInput, X, Y, textboxWidth, textboxHeight) {
         top: Y,
         width: textboxWidth,
         height: textboxHeight,
-        fontSize: 32,
-        //fontFamily: 'Verdana',
+        fontFamily: 'Inconsolata',
         fill: 'white'
     });
+    
+    var fontSizeVertical = textboxHeight * 0.75;
+    var fontSizeHorizontal = textboxWidth / textInput.length * 0.75;
+    text.fontSize = fontSizeVertical > fontSizeHorizontal ? fontSizeHorizontal : fontSizeVertical
 
     imageTranslateApp.canvas.add(rect);
     imageTranslateApp.canvas.add(text);
