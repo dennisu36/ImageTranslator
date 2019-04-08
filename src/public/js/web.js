@@ -1,47 +1,53 @@
 function initializeImageTranslateApp() {
-    let App = {
-        image: document.getElementById("myImage"),
-        canvas: new fabric.StaticCanvas('myCanvas') //don't need interactivity that regular fabric.Canvas provides
-    };
-    
-    App.image.onload = function() {
-        var canvas = document.getElementById("myCanvas");
-        var img = App.image;
-        var width = img.width;
-        var height = img.height;
-        canvas.style.width = img.width;
-        canvas.style.height = img.height;
+    const image = document.getElementById('myImage');
+    const canvas = new fabric.StaticCanvas('myCanvas');
+    canvas.setHeight(600);
+    canvas.setWidth(600);
+  
+    image.onload = function() {
 
-        renderImage(App.image, 0, 0, App.image.width, App.image.height);
+        var fImage = new fabric.Image(image);
+        fImage.scaleToHeight(canvas.getHeight());
+        canvas.setWidth(fImage.getScaledWidth());
+        canvas.add(fImage);
 
-	//make Tesseract match with source language that is selected
+	//Start setting Tesseract options
+        tessOptions = {
+            tessedit_pageseg_mode: 1
+        };
+        
+        //make Tesseract match with source language that is selected
 	const srcLang = document.getElementById('language-src-select').value;
-        var selLang ='';
         if (srcLang == 'chinese') {
-            selLang = 'chi_sim';
+            tessOptions.lang = 'chi_sim';
         } else if (srcLang == 'french') {
-            selLang ='fra';
+            tessOptions.lang ='fra';
         } else {
-            selLang = 'eng';
+            tessOptions.lang = 'eng';
+        }
+
+        if (tessOptions.lang == 'eng' || tessOptions.lang == 'fra') {
+            //This probably obviates the removeJunkText() function mostly, but I guess that can still
+            //get rid of stray consonants that aren't part of words.
+            tessOptions.tessedit_char_whitelist = "ABCDEFGHIJKLMNOPQRSTUVWYZabcdefghijklmnopqrstuvwxyz1234567890.?!"
         }
 
         console.log("loaded...", "$$$$");
-        Tesseract.recognize(App.image,{
-            lang: selLang
-        }).progress((progress) => {
+        Tesseract.recognize(image,tessOptions)
+        .progress((progress) => {
             console.log(progress, "$$$$");
             if (progress.hasOwnProperty('progress')) {
-                    $('#progress').text(progress.status + ": " + (progress.progress * 100).toFixed(0) + " %");
+                $('#progress').text(progress.status + ": " + (progress.progress * 100).toFixed(0) + " %");
             } else {
-                    $('#progress').text(progress.status);
+                $('#progress').text(progress.status);
             }
         }).then((result) => {
             console.log(result, "$$$$");
-            $('#result').text(result.text);
+            $('#result').text(removeJunkText(result.text));
             handleOCRResult(result);
         });
     }
-    return App;
+    return {image: image, canvas: canvas};
 }
 
 var validTypes = ['jpg', 'jpeg', 'png', 'pdf'];
@@ -75,6 +81,8 @@ function removeUpload() {
     $('.file-upload-input').replaceWith($('.file-upload-input').clone());
     $('.file-upload-content').hide();
     $('.image-upload-wrap').show();
+    imageTranslateApp.canvas.remove(...imageTranslateApp.canvas.getObjects());
+    console.log("Removed image");
 }
 
 $('.image-upload-wrap').bind('dragover', function () {
@@ -101,7 +109,7 @@ function handleOCRResult(result) {
 
         const obj = {};
         obj.id = index;
-        obj.text = line.text;
+        obj.text = removeJunkText(line.text);
         obj.source_language = srcLang;
         obj.destination_language = destLang;
         return obj;
@@ -176,16 +184,17 @@ async function handleServerResponse(textList, boundingBoxes) {
     }
 }
 
-function renderImage(imgElement, X, Y, width, height) {
-    var imgInstance = new fabric.Image(imgElement, {
-        left: 0,
-        top: 0
-    });
-    imageTranslateApp.canvas.add(imgInstance);
-}
 
 function renderText(textInput, X, Y, textboxWidth, textboxHeight) {
     console.log(textInput + " at " + X + "," + Y + " width: " + textboxWidth + " height: " + textboxHeight);
+    
+    var fImage = imageTranslateApp.canvas.item(0);
+    var scaleX = fImage.scaleX;
+    var scaleY = fImage.scaleY;
+    X *= scaleX;
+    Y *= scaleY;
+    textboxWidth *= scaleX;
+    textboxHeight *= scaleY;
 
     //render a background rect in black
     var rect = new fabric.Rect({
@@ -202,12 +211,45 @@ function renderText(textInput, X, Y, textboxWidth, textboxHeight) {
         top: Y,
         width: textboxWidth,
         height: textboxHeight,
-        fontSize: 32,
-        //fontFamily: 'Verdana',
+        fontFamily: 'Consolas',
         fill: 'white'
     });
+    
+    var fontSizeVertical = textboxHeight;
+    var fontSizeHorizontal = textboxWidth / textInput.length / 0.55;
+    text.fontSize = fontSizeVertical > fontSizeHorizontal ? fontSizeHorizontal : fontSizeVertical;
 
     imageTranslateApp.canvas.add(rect);
     imageTranslateApp.canvas.add(text);
+}
+
+function removeJunkText(inString) {
+  /*
+     @desc
+     Removes stray/junk characters from the input string and returns the cleaned string.
+     This does make some assumptions about the intended content of the original text, so might not
+     be appropriate for all inputs.
+
+     @param string inString
+     A string to clean up.
+
+     @return string
+    */
+
+    let punctuation = ",./;'[]-=`";
+    let consonants = "qwrtyupsdfghjklzxcvbnm";
+    punctuation = punctuation.split('');
+    consonants = consonants.split(''); 
+    punctuation.forEach(function(element){
+        inString = inString.replace(" " + element + " ", " ");
+        inString = inString.replace(element + " ", " ");
+        inString = inString.replace(" " + element.toUpperCase() + " ", " ");
+        inString = inString.replace(element.toUpperCase() + " ", " ");
+    });
+    consonants.forEach(function(element){
+        inString = inString.replace(" " + element + " ", " ");
+        inString = inString.replace(" " + element.toUpperCase() + " ", " ");
+    });
+    return inString;
 }
 
