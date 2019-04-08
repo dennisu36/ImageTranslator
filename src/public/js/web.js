@@ -5,19 +5,39 @@ function initializeImageTranslateApp() {
     canvas.setWidth(600);
   
     image.onload = function() {
+        
+        var fImage = new fabric.Image(image);
+        fImage.scaleToHeight(canvas.getHeight());
+        canvas.setWidth(fImage.getScaledWidth());
+        canvas.add(fImage);
+
+        console.log(image.src);
+        //Perform AJAX using dataurl as param, THEN supply to handleOCRResult
+        rekognitionReq({dataUrl: image.src})
+        .then(lines => {
+            console.log(lines);
+            handleOCRResult(lines);
+        })
+        .catch(error => {
+            console.error(error);
+        });
+    }
+
+    /*
+    image.onload = function() {
 
         var fImage = new fabric.Image(image);
         fImage.scaleToHeight(canvas.getHeight());
         canvas.setWidth(fImage.getScaledWidth());
         canvas.add(fImage);
 
-	//Start setting Tesseract options
+	    //Start setting Tesseract options
         tessOptions = {
             tessedit_pageseg_mode: 1
         };
         
         //make Tesseract match with source language that is selected
-	const srcLang = document.getElementById('language-src-select').value;
+	    const srcLang = document.getElementById('language-src-select').value;
         if (srcLang == 'chinese') {
             tessOptions.lang = 'chi_sim';
         } else if (srcLang == 'french') {
@@ -46,8 +66,21 @@ function initializeImageTranslateApp() {
             $('#result').text(removeJunkText(result.text));
             handleOCRResult(result);
         });
-    }
+    }*/
     return {image: image, canvas: canvas};
+}
+
+async function rekognitionReq(data) {
+    const res = await fetch('/rekognize', { 
+        method: 'POST', 
+        body: JSON.stringify(data),
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    }).then(response => response.json()).catch(error => {
+        console.error(error);
+    });
+    return res;
 }
 
 var validTypes = ['jpg', 'jpeg', 'png', 'pdf'];
