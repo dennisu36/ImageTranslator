@@ -76,7 +76,7 @@ body {
     border: 4px dashed #ffffff;
 }
 
-.image-title-wrap {
+.image-title-wrap, .text-rendering-controls {
     padding: 0 15px 15px 15px;
     color: #222;
 }
@@ -99,7 +99,7 @@ body {
     padding: 20px;
 }
 
-.remove-image, .text-rendering-controls {
+.remove-image, .toggle-text {
     width: 200px;
     margin: 0;
     color: #fff;
@@ -114,14 +114,14 @@ body {
     font-weight: 700;
 }
 
-.remove-image:hover, .text-rendering-controls:hover {
+.remove-image:hover, .toggle-text:hover {
     background: #f30;
     color: #fff;
     transition: all .2s ease;
     cursor: pointer;
 }
 
-.remove-image:active, .text-rendering-controls:active {
+.remove-image:active, .toggle-text:active {
     border: 0;
     transition: all .2s ease;
 }
