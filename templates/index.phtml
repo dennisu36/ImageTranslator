@@ -45,18 +45,13 @@
 
                         <div class="file-upload-content">
                             <div class="text-rendering-controls">
-                                <button type="button" onclick="toggleRenderedText(this)" class="toggle-text">
-                                    Hide Rendered Text
-                                </button>
+                                <button type="button" onclick="toggleRenderedText(this)" class="toggle-text">Hide Rendered Text</button>
                             </div>
                             <canvas id="myCanvas" width="1000" height="1000">
                                 <img class="file-upload-image" src="#" id="myImage" max-width="500" max-height="500">
                             </canvas>
                             <div class="image-title-wrap">
-                                <button type="button" onclick="removeUpload()" class="remove-image">
-                                    Remove <br/>
-                                    <span class="image-title">Uploaded Image</span>
-                                </button>
+                                <button type="button" onclick="removeUpload()" class="remove-image">Remove <br/><span class="image-title">Uploaded Image</span></button>
                                 <div class="ocr-result" id="result">
                                     <span class="progress-msg" id="progress"></span>
                                     <br><h6 class="ocr-result">OCR Result:</h6>
