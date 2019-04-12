@@ -82,6 +82,7 @@ function removeUpload() {
     $('.file-upload-content').hide();
     $('.image-upload-wrap').show();
     imageTranslateApp.canvas.remove(...imageTranslateApp.canvas.getObjects());
+    $('.toggle-text').innerHTML = "Hide Rendered Text";
     console.log("Removed image");
 }
 
@@ -221,6 +222,22 @@ function renderText(textInput, X, Y, textboxWidth, textboxHeight) {
 
     imageTranslateApp.canvas.add(rect);
     imageTranslateApp.canvas.add(text);
+}
+
+function toggleRenderedText(button) {
+    var numObjects = imageTranslateApp.canvas.getObjects().length;
+    var i;
+    for (i = 1; i < numObjects; i++) {
+        var item = imageTranslateApp.canvas.item(i);
+        item.visible = !item.visible;
+    }
+    if (button.innerHTML.startsWith("Hide")) {
+        button.innerHTML = "Show Rendered Text";
+        console.log("Hid rendered text");
+    } else {
+        button.innerHTML = "Hide Rendered Text";
+        console.log("Showed rendered text");
+    }
 }
 
 function removeJunkText(inString) {
