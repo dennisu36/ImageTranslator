@@ -7,8 +7,11 @@ function initializeImageTranslateApp() {
     image.onload = function() {
 
         var fImage = new fabric.Image(image);
-        fImage.scaleToWidth(canvas.getWidth());
-        canvas.setHeight(fImage.getScaledHeight());
+        if (fImage.width >= fImage.height) {
+            fImage.scaleToWidth(canvas.getWidth);
+        } else {
+            fImage.scaleToHeight(canvas.getHeight());
+        }
         canvas.add(fImage);
 
 	//Start setting Tesseract options
@@ -219,7 +222,7 @@ function renderText(textInput, destLang, X, Y, textboxWidth, textboxHeight) {
     
     var fontSizeVertical = textboxHeight;
     var fontSizeHorizontal = textboxWidth / textInput.length;
-    if (destLang === "chinese") {
+    if (destLang === "zh") {
         fontSizeHorizontal /= 0.9;
     } else {
         fontSizeHorizontal /= 0.55;
