@@ -231,6 +231,7 @@ function toggleRenderedText(button) {
         var item = imageTranslateApp.canvas.item(i);
         item.visible = !item.visible;
     }
+    imageTranslateApp.canvas.renderAll();
     if (button.innerHTML.startsWith("Hide")) {
         button.innerHTML = "Show Rendered Text";
         console.log("Hid rendered text");
