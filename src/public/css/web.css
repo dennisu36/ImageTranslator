@@ -99,7 +99,7 @@ body {
     padding: 20px;
 }
 
-.remove-image {
+.remove-image, .text-rendering-controls {
     width: 200px;
     margin: 0;
     color: #fff;
@@ -114,14 +114,14 @@ body {
     font-weight: 700;
 }
 
-.remove-image:hover {
+.remove-image:hover, .text-rendering-controls:hover {
     background: #f30;
     color: #fff;
     transition: all .2s ease;
     cursor: pointer;
 }
 
-.remove-image:active {
+.remove-image:active, .text-rendering-controls:active {
     border: 0;
     transition: all .2s ease;
 }
