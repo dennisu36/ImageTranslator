@@ -9,8 +9,10 @@ function initializeImageTranslateApp() {
         var fImage = new fabric.Image(image);
         if (fImage.width >= fImage.height) {
             fImage.scaleToWidth(canvas.getWidth);
+            canvas.setHeight(fImage.getScaledHeight());
         } else {
             fImage.scaleToHeight(canvas.getHeight());
+            canvas.setWidth(fImage.getScaledWidth());
         }
         canvas.add(fImage);
 
@@ -85,6 +87,8 @@ function removeUpload() {
     $('.file-upload-content').hide();
     $('.image-upload-wrap').show();
     imageTranslateApp.canvas.remove(...imageTranslateApp.canvas.getObjects());
+    imageTranslateApp.canvas.setWidth(600);
+    imageTranslateApp.canvas.setHeight(600);
     console.log("Removed image");
 }
 
