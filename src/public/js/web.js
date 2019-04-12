@@ -7,8 +7,8 @@ function initializeImageTranslateApp() {
     image.onload = function() {
 
         var fImage = new fabric.Image(image);
-        fImage.scaleToHeight(canvas.getHeight());
-        canvas.setWidth(fImage.getScaledWidth());
+        fImage.scaleToWidth(canvas.getWidth());
+        canvas.setHeight(fImage.getScaledHeight());
         canvas.add(fImage);
 
 	//Start setting Tesseract options
@@ -180,13 +180,15 @@ async function handleServerResponse(textList, boundingBoxes) {
         console.log(bbox);
         var width = bbox.x1 - bbox.x0;
         var height = bbox.y1 - bbox.y0;
-        renderText(text.translated_text, bbox.x0, bbox.y0, width, height);
+        renderText(text.translated_text, text.destination_language,
+                   bbox.x0, bbox.y0, width, height);
     }
 }
 
 
-function renderText(textInput, X, Y, textboxWidth, textboxHeight) {
-    console.log(textInput + " at " + X + "," + Y + " width: " + textboxWidth + " height: " + textboxHeight);
+function renderText(textInput, destLang, X, Y, textboxWidth, textboxHeight) {
+    console.log(textInput + " in " + destLang + " at " + X + "," + Y +
+            " width: " + textboxWidth + " height: " + textboxHeight);
     
     var fImage = imageTranslateApp.canvas.item(0);
     var scaleX = fImage.scaleX;
@@ -216,7 +218,12 @@ function renderText(textInput, X, Y, textboxWidth, textboxHeight) {
     });
     
     var fontSizeVertical = textboxHeight;
-    var fontSizeHorizontal = textboxWidth / textInput.length / 0.55;
+    var fontSizeHorizontal = textboxWidth / textInput.length;
+    if (destLang === "chinese") {
+        fontSizeHorizontal /= 0.9;
+    } else {
+        fontSizeHorizontal /= 0.55;
+    }
     text.fontSize = fontSizeVertical > fontSizeHorizontal ? fontSizeHorizontal : fontSizeVertical;
 
     imageTranslateApp.canvas.add(rect);
