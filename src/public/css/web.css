@@ -100,7 +100,6 @@ body {
 }
 
 .remove-image, .toggle-text {
-    width: 200px;
     margin: 0;
     color: #fff;
     background: #f30;

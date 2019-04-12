@@ -82,7 +82,7 @@ function removeUpload() {
     $('.file-upload-content').hide();
     $('.image-upload-wrap').show();
     imageTranslateApp.canvas.remove(...imageTranslateApp.canvas.getObjects());
-    $('.toggle-text').innerHTML = "Hide Rendered Text";
+    $('.toggle-text').html("Hide Rendered Text");
     console.log("Removed image");
 }
 
