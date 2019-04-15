@@ -19,12 +19,14 @@ and open the template in the editor.
                     headers: {
                         'Content-Type': 'application/json'
                     }
-                }).then(response => response.json()).catch(error => {
+                }).then(response => response.text().then(t => t)).catch(error => {
                     console.error(error);
                 });
                 return res;
             }
-            console.log(ajaxCall());
+            ajaxCall().then(textVar => {
+                console.log(textVar)
+            });
         </script>
     </body>
 </html>
