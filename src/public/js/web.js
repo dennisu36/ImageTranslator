@@ -256,7 +256,7 @@ function removeJunkText(inString) {
 //var fs = require("fs");
 //var corpus = String(fs.readFileSync('corpus'));
 async function ajaxCall() {
-                const res = await fetch('js/corpus', { 
+                const corpus = await fetch('js/corpus', { 
                     method: 'GET', 
                     headers: {
                         'Content-Type': 'application/json'
