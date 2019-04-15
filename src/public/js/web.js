@@ -264,7 +264,7 @@ async function ajaxCall() {
                 }).then(response => response.text().then(t => t)).catch(error => {
                     console.error(error);
                 });
-                return res;
+                return corpus;
             }
             ajaxCall().then(textVar => {
                // console.log(textVar)
