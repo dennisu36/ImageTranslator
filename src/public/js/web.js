@@ -58,10 +58,19 @@ function readURL(input) {
         if (isSuccess) {
             var reader = new FileReader();
             if(extension == 'pdf'){
-                alert("TODO convert the PDF to an image and load it into the image container.");
+ //               alert("convert the PDF to an image and load it into the image container.");
 		showPDF(URL.createObjectURL($('.file-upload-input').get(0).files[0]));
 		//showPage(2);
-
+		 /*
+		reader.onload = function(e) {
+                $('.file-upload-wrap').hide();
+                $('#myImage').attr('src', e.target.result);
+                $('.file-upload-content').show();
+                $('.image-title').html(input.files[0].name);
+           */
+		
+		
+		};
             } else if (extension == 'jpg', 'png', 'jpeg') {
                 //alert('You have inserted an image.');
 	      //Nothing else to do here because the image .onload function initiates OCR
