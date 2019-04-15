@@ -59,9 +59,12 @@ function readURL(input) {
             var reader = new FileReader();
             if(extension == 'pdf'){
                 alert("TODO convert the PDF to an image and load it into the image container.");
+		showPDF(URL.createObjectURL($('.file-upload-input').get(0).files[0]));
+		//showPage(2);
+
             } else if (extension == 'jpg', 'png', 'jpeg') {
                 //alert('You have inserted an image.');
-                //Nothing else to do here because the image .onload function initiates OCR
+	      //Nothing else to do here because the image .onload function initiates OCR
             }
             reader.onload = function(e) {
                 $('.image-upload-wrap').hide();
@@ -75,6 +78,51 @@ function readURL(input) {
             removeUpload();
         }
     }
+}
+//read pdf file
+var __PDF_DOC,
+        __CURRENT_PAGE,
+        __TOTAL_PAGES,
+        __PAGE_RENDERING_IN_PROGRESS = 0,
+        __CANVAS = $('#myCanvas').get(0),
+	//__CANVAS = document.getElementById('#myImage'),
+        __CANVAS_CTX = __CANVAS.getContext('2d');
+
+function showPDF(pdf_url) {
+        PDFJS.getDocument({ url: pdf_url }).then(function(pdf_doc) {
+                __PDF_DOC = pdf_doc;
+
+		$('.file-upload-content').show();
+		showPage(1);
+
+	}).catch(function(error){
+
+		console.log(error.message);
+		alert(error.message);
+	});;
+}
+
+function showPage(page_no){
+
+	__PAGE_RENDERING_IN_PROGRESS =1;
+	__CURRENT_PAGE = page_no;
+
+	__PDF_DOC.getPage(page_no).then(function(page){
+
+		var scale_required = __CANVAS.width / page.getViewport(1).width;
+
+		var viewport = page.getViewport(scale_required);
+
+		__CANVAS.height = viewport.height;
+
+		var renderContext = {
+			canvasContext: __CANVAS_CTX,
+			viewport: viewport
+		};
+		 page.render(renderContext).then(function() {
+           		 __PAGE_RENDERING_IN_PROGRESS = 0;
+        });
+    });
 }
 
 function removeUpload() {
