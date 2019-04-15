@@ -256,7 +256,8 @@ function removeJunkText(inString) {
 //var fs = require("fs");
 //var corpus = String(fs.readFileSync('corpus'));
 async function ajaxCall() {
-                const corpus = await fetch('js/corpus', { 
+                const corpus = await fetch('/corpus.txt', {
+		//const corpus = await fetch('/testing.txt', { 
                     method: 'GET', 
                     headers: {
                         'Content-Type': 'application/json'
@@ -266,10 +267,10 @@ async function ajaxCall() {
                 });
                 return corpus;
             }
-            ajaxCall().then(textVar => {
-               // console.log(textVar)
-               console.log("\nInitializing spellchecker!\n")
-            });
+            //ajaxCall().then(textVar => {
+               //console.log(textVar)
+	       console.log("\nInitializing spellchecker!\n");
+            //});
 
 //console.log("\nInitializing spellchecker!\n");
 
@@ -292,7 +293,7 @@ function getWordCounts(text) {
   return resultObj;
 }
 
-var WORD_COUNTS = getWordCounts(corpus);
+var WORD_COUNTS = getWordCounts('/corpus.txt');
 // console.log(WORD_COUNTS)
 var alphabet = "abcdefghijklmnopqrstuvwxyz";
 
@@ -413,8 +414,9 @@ console.log('===================================================================
 /*
   This script runs your spellchecker on every input you provide.
 */
-var inputWords = document.getElementById('result').split(' ');
-var output = inputWords.map(function(word) {
+var inputWords = document.getElementById('result').value;
+var input = inputWords.slice(0);
+var output = input.map(function(word) {
   var correction = correct(word);
   if (correction === word) {
     return " - " + word + " is spelled correctly.";
