@@ -397,7 +397,7 @@ console.log('===================================================================
 /*
   This script runs your spellchecker on every input you provide.
 */
-var inputWords = document.getElementById('result').slice();
+var inputWords = document.getElementById('result').split(' ');
 var output = inputWords.map(function(word) {
   var correction = correct(word);
   if (correction === word) {
