@@ -13,15 +13,18 @@ and open the template in the editor.
     <body>
         <div>TODO write content</div>
         <script>
-            const res = await fetch('/text.txt', { 
-                method: 'GET', 
-                headers: {
-                    'Content-Type': 'application/json'
-                }
-            }).then(response => response.json()).catch(error => {
-                console.error(error);
-            });
-            console.log(res);
+            async function ajaxCall() {
+                const res = await fetch('/text.txt', { 
+                    method: 'GET', 
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                }).then(response => response.json()).catch(error => {
+                    console.error(error);
+                });
+                return res;
+            }
+            console.log(ajaxCall());
         </script>
     </body>
 </html>
