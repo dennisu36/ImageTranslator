@@ -253,9 +253,25 @@ function removeJunkText(inString) {
     return inString;
 }
 
-var fs = require("fs");
-var corpus = String(fs.readFileSync('corpus'));
-console.log("\nInitializing spellchecker!\n");
+//var fs = require("fs");
+//var corpus = String(fs.readFileSync('corpus'));
+async function ajaxCall() {
+                const res = await fetch('js/corpus', { 
+                    method: 'GET', 
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                }).then(response => response.text().then(t => t)).catch(error => {
+                    console.error(error);
+                });
+                return res;
+            }
+            ajaxCall().then(textVar => {
+               // console.log(textVar)
+               console.log("\nInitializing spellchecker!\n")
+            });
+
+//console.log("\nInitializing spellchecker!\n");
 
 /*
   Returns an object with each unique word in the input as a key,
