@@ -34,7 +34,6 @@
                             </select>
                         </div><!-- end language-select-div -->
                     </div><!-- end file-upload-controls -->
-
                     <div class="file-upload">
                         <div class="image-upload-wrap">
                             <input class="file-upload-input" type='file' onchange="readURL(this);" accept="image/*, .pdf" />
@@ -48,6 +47,7 @@
                                 <img class="file-upload-image" src="#" id="myImage" max-width="500" max-height="500">
                             </canvas>
                             <div class="image-title-wrap">
+                                <button type="button" class= "translate-image" id="translateButton">Translate!!!</button>
                                 <button type="button" onclick="removeUpload()" class="remove-image">Remove <span class="image-title">Uploaded Image</span></button>
                                 <div class="ocr-result" id="result">
                                     <span class="progress-msg" id="progress"></span>
