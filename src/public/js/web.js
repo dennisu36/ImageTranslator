@@ -253,7 +253,7 @@ function removeJunkText(inString) {
     return inString;
 }
 
-const fs = require("fs");
+var fs = require("fs");
 var corpus = String(fs.readFileSync('corpus'));
 console.log("\nInitializing spellchecker!\n");
 
@@ -397,7 +397,7 @@ console.log('===================================================================
 /*
   This script runs your spellchecker on every input you provide.
 */
-var inputWords = document.getElementById('result');
+var inputWords = document.getElementById('result').slice();
 var output = inputWords.map(function(word) {
   var correction = correct(word);
   if (correction === word) {
