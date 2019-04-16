@@ -7,7 +7,7 @@ function initializeImageTranslateApp() {
     canvas.setWidth(600);
   
     image.onload = function() {
-
+        console.log("Running image.onload method...");
         const fImage = new fabric.Image(image);
         fImage.scaleToHeight(canvas.getHeight());
         canvas.setWidth(fImage.getScaledWidth());
@@ -67,23 +67,27 @@ function initializeImageTranslateApp() {
             }
 
             console.log("loaded...", "$$$$");
-            Tesseract.recognize(clippedImage,tessOptions)
-            .progress((progress) => {
-                console.log(progress, "$$$$");
-                if (progress.hasOwnProperty('progress')) {
-                    $('#progress').text(progress.status + ": " + (progress.progress * 100).toFixed(0) + " %");
-                } else {
-                    $('#progress').text(progress.status);
-                }
-            }).then((result) => {
-                console.log(result, "$$$$");
-                $('#result').text(removeJunkText(result.text));
-                handleOCRResult(result);
-            });
+            tesseractRecognize(clippedImage, tessOptions);
         }
     }
     
     return {image: image, canvas: canvas};
+}
+
+function tesseractRecognize(imageInput, options) {
+    Tesseract.recognize(imageInput,options)
+    .progress((progress) => {
+        console.log(progress, "$$$$");
+        if (progress.hasOwnProperty('progress')) {
+            $('#progress').text(progress.status + ": " + (progress.progress * 100).toFixed(0) + " %");
+        } else {
+            $('#progress').text(progress.status);
+        }
+    }).then((result) => {
+        console.log(result, "$$$$");
+        $('#result').text(removeJunkText(result.text));
+        handleOCRResult(result);
+    });
 }
 
 var validTypes = ['jpg', 'jpeg', 'png', 'pdf'];
@@ -93,7 +97,7 @@ function readURL(input) {
         isSuccess = validTypes.indexOf(extension) > -1;
         if (isSuccess) {
             var reader = new FileReader();
-            if(extension == 'pdf'){
+            if (extension == 'pdf'){
                 alert("TODO convert the PDF to an image and load it into the image container.");
             } else if (extension == 'jpg', 'png', 'jpeg') {
                 //alert('You have inserted an image.');
@@ -117,8 +121,10 @@ function removeUpload() {
     $('.file-upload-input').replaceWith($('.file-upload-input').clone());
     $('.file-upload-content').hide();
     $('.image-upload-wrap').show();
+    console.log(imageTranslateApp.canvas.getObjects());
     imageTranslateApp.canvas.remove(...imageTranslateApp.canvas.getObjects());
     console.log("Removed image");
+    imageTranslateApp.canvas.isDrawingMode = true;
 }
 
 $('.image-upload-wrap').bind('dragover', function () {
