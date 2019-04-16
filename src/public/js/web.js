@@ -8,7 +8,7 @@ function initializeImageTranslateApp() {
 
         var fImage = new fabric.Image(image);
         if (fImage.width >= fImage.height) {
-            fImage.scaleToWidth(canvas.getWidth);
+            fImage.scaleToWidth(canvas.getWidth());
             canvas.setHeight(fImage.getScaledHeight());
         } else {
             fImage.scaleToHeight(canvas.getHeight());
