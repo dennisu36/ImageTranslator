@@ -257,7 +257,6 @@ function removeJunkText(inString) {
 //var corpus = String(fs.readFileSync('corpus'));
 async function ajaxCall() {
                 const corpus = await fetch('/corpus.txt', {
-		//const corpus = await fetch('/testing.txt', { 
                     method: 'GET', 
                     headers: {
                         'Content-Type': 'application/json'
@@ -414,23 +413,24 @@ function correct(word) {
 /*
   This script runs your spellchecker on every input you provide.
 */
+function autoCorrect() {
 var inputWords = document.getElementById('result').value;
 var input = inputWords.split(" ");
 var output = input.map(function(word) {
   var correction = correct(word);
   if (correction === word) {
-    return " - " + word + " is spelled correctly.";
+    //return " - " + word + " is spelled correctly.";
+	console.log(word + " is spelled correctly.");
   } else if (typeof correction === "undefined") {
-    return " - " + word + " didn't get any output from the spellchecker.";
+    //return " - " + word + " didn't get any output from the spellchecker.";
+	console.log(word + " didn't get any output from the spellchecker.");
   } else {
-    return " - " + word + " should be spelled as " + correction + ".";
+    //return " - " + word + " should be spelled as " + correction + ".";
+	console.log(word + " should be spelled as " + correction + ".");
   }
+var res = inputWords.replace(inputWords, correction);
+document.getElementById("result").value = res;
+console.log("\nSpellcheck Finished!");
 });
-console.log(output.join("\n\n"));
-console.log("\nFinished!");
-
-function autoCorrect() {
-  var str = document.getElementById("result").innerHTML; 
-  var res = str.replace(inputWords, correction);
-  document.getElementById("result").innerHTML = res;
 }
+
