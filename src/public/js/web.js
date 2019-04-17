@@ -267,7 +267,7 @@ async function ajaxCall() {
                 });
                 return corpus;
             }
-            //ajaxCall().then(textVar => {
+           // ajaxCall().then(textVar => {
                //console.log(textVar)
 	       console.log("\nInitializing spellchecker!\n");
             //});
@@ -383,7 +383,7 @@ function correct(word) {
       }
     }
   }
-console.log('========================================================================')
+//console.log('========================================================================')
   var maxCount2 = 0;
   var correctWord2 = correctWord;
 
@@ -415,7 +415,7 @@ console.log('===================================================================
   This script runs your spellchecker on every input you provide.
 */
 var inputWords = document.getElementById('result').value;
-var input = inputWords.slice(0);
+var input = inputWords.split(" ");
 var output = input.map(function(word) {
   var correction = correct(word);
   if (correction === word) {
