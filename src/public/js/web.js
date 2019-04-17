@@ -256,7 +256,7 @@ function removeJunkText(inString) {
 //var fs = require("fs");
 //var corpus = String(fs.readFileSync('corpus'));
 async function ajaxCall() {
-                const corpus = await fetch('/corpus.txt', {
+                const corpus = await fetch('/corpus', {
                     method: 'GET', 
                     headers: {
                         'Content-Type': 'application/json'
@@ -292,7 +292,7 @@ function getWordCounts(text) {
   return resultObj;
 }
 
-var WORD_COUNTS = getWordCounts('/corpus.txt');
+var WORD_COUNTS = getWordCounts('/corpus');
 // console.log(WORD_COUNTS)
 var alphabet = "abcdefghijklmnopqrstuvwxyz";
 
