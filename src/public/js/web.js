@@ -181,7 +181,6 @@ async function translateReq(textList) {
     /*
      @desc
      Performs an AJAX request to the /translate url using http POST method.
-
      @param object textList
      This is a javascript object that contains a list of objects containing text as well as meta data describing translating preferences. For example:
      const textList = [
@@ -192,7 +191,6 @@ async function translateReq(textList) {
              text: 'Bellum est malo'
          }
      ];
-
      @return
      A javascript object that contains a list of objects containing the translated text as well as meta data describing the translation. This data is received from the server over AJAX. For example:
      const textList = [
@@ -203,7 +201,6 @@ async function translateReq(textList) {
              translated_text: 'War is bad'
          }
      ];
-
      @throws Exception on unsuccessful network connection to the server.
      */
 
@@ -277,10 +274,8 @@ function removeJunkText(inString) {
      Removes stray/junk characters from the input string and returns the cleaned string.
      This does make some assumptions about the intended content of the original text, so might not
      be appropriate for all inputs.
-
      @param string inString
      A string to clean up.
-
      @return string
     */
 
@@ -300,4 +295,3 @@ function removeJunkText(inString) {
     });
     return inString;
 }
-
