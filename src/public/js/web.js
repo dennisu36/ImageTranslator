@@ -57,27 +57,44 @@ function readURL(input) {
         isSuccess = validTypes.indexOf(extension) > -1;
         if (isSuccess) {
             var reader = new FileReader();
-            if(extension == 'pdf'){
-                alert("TODO convert the PDF to an image and load it into the image container.");
-		showPDF(URL.createObjectURL($('.file-upload-input').get(0).files[0]));
+            if(extension == 'pdf' ){
+//                alert("TODO convert the PDF to an image and load it into the image container.");
+//		showPDF(URL.createObjectURL($('.file-upload-input').get(0).files[0]));
 		//showPage(2);
 
-            } else if (extension == 'jpg', 'png', 'jpeg') {
+		var image1 = URL.createObjectURL($('.file-upload-input').get(0).files[0]);
+		showPDF(image1);
+		 /*
+		reader.onload = function(a) {
+                $('.image-upload-wrap').hide();
+                $('myImage).attr('src', a.target.result);
+                $('.file-upload-content').show();
+                $('.image-title').html(input.files[0].name);
+            };
+		reader.readAsDataURL(input.files[0]);
+
+*/
+
+           } else if (extension == 'jpg', 'png', 'jpeg') {
                 //alert('You have inserted an image.');
 	      //Nothing else to do here because the image .onload function initiates OCR
-            }
+	   }
             reader.onload = function(e) {
                 $('.image-upload-wrap').hide();
                 $('#myImage').attr('src', e.target.result);
                 $('.file-upload-content').show();
                 $('.image-title').html(input.files[0].name);
             };
-            reader.readAsDataURL(input.files[0]);
-        } else {
+	   
+           reader.readAsDataURL(input.files[0]);
+        
+	   
+	   } else {
             alert('Invalid File Type. Please insert JPG, JPEG, PNG, or PDF files.');
             removeUpload();
         }
     }
+
 }
 //read pdf file
 var __PDF_DOC,
@@ -89,17 +106,34 @@ var __PDF_DOC,
         __CANVAS_CTX = __CANVAS.getContext('2d');
 
 function showPDF(pdf_url) {
-        PDFJS.getDocument({ url: pdf_url }).then(function(pdf_doc) {
-                __PDF_DOC = pdf_doc;
+//	var reader = new FileReader();
+	
+	PDFJS.getDocument({ url: pdf_url }).then(function(pdf_doc) {
+                 __PDF_DOC = pdf_doc;
 
-		$('.file-upload-content').show();
-		showPage(1);
+	//	$('.file-upload-content').show();
+	//	showPage(1);
 
+/*	
+	 reader.onload = function(e) {
+        $('.image-upload-wrap').hide();
+        $('#myImage').attr('src', e.target.result);
+        $('.file-upload-content').show();
+        $('.image-title').html(input.files[0].name);
+        };
+
+*/
+       // reader.readAsDataURL(input.files[0]);
+	showPage(1);
+	
+	
 	}).catch(function(error){
 
 		console.log(error.message);
 		alert(error.message);
 	});;
+
+
 }
 
 function showPage(page_no){
@@ -181,7 +215,6 @@ async function translateReq(textList) {
     /*
      @desc
      Performs an AJAX request to the /translate url using http POST method.
-
      @param object textList
      This is a javascript object that contains a list of objects containing text as well as meta data describing translating preferences. For example:
      const textList = [
@@ -192,7 +225,6 @@ async function translateReq(textList) {
              text: 'Bellum est malo'
          }
      ];
-
      @return
      A javascript object that contains a list of objects containing the translated text as well as meta data describing the translation. This data is received from the server over AJAX. For example:
      const textList = [
@@ -203,7 +235,6 @@ async function translateReq(textList) {
              translated_text: 'War is bad'
          }
      ];
-
      @throws Exception on unsuccessful network connection to the server.
      */
 
@@ -277,10 +308,8 @@ function removeJunkText(inString) {
      Removes stray/junk characters from the input string and returns the cleaned string.
      This does make some assumptions about the intended content of the original text, so might not
      be appropriate for all inputs.
-
      @param string inString
      A string to clean up.
-
      @return string
     */
 
