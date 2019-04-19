@@ -310,9 +310,9 @@ function editDistance1(word) {
 
     //Adding any one character (from the alphabet) anywhere in the word.
     for (var i = 0; i <= word.length; i++) {
-        for (var j = 0; j < alphabet.length; j++) {
+        for (var j = 0; j < ALPHABET.length; j++) {
             var newWord = word.slice();
-            newWord.splice(i, 0, alphabet[j]);
+            newWord.splice(i, 0, ALPHABET[j]);
             results.push(newWord.join(''));
         }
     }
@@ -338,9 +338,9 @@ function editDistance1(word) {
 
     //Substituting any character in the word with another character.
     for (var i = 0; i < word.length; i++) {
-        for (var j = 0; j < alphabet.length; j++) {
+        for (var j = 0; j < ALPHABET.length; j++) {
             var newWord = word.slice();
-            newWord[i] = alphabet[j];
+            newWord[i] = ALPHABET[j];
             results.push(newWord.join(''));
         }
     }
