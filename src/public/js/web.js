@@ -360,11 +360,15 @@ function correct(word) {
     function capitalize(word) {
         return word.charAt(0).toUpperCase() + word.slice(1);
     }
+    
+    function preserveCapitalization(word) {
+        return capital ? capitalize(word) : word;
+    }
 
     var capital = word.toLowerCase() === word;
     word = word.toLowerCase();
     if (word in WORD_COUNTS) {
-        return capital ? capitalize(word) : word;
+        return preserveCapitalization(word);
     }
 
     var maxCount = 0;
@@ -404,14 +408,14 @@ function correct(word) {
 
     if (word.length < 6) {
         if (maxCount2 > 100 * maxCount) {
-            return capital ? capitalize(correctWord2) : correctWord2;
+            return preserveCapitalization(correctWord2);
         }
-        return correctWord;
+        return preserveCapitalization(correctWord);
     } else {
         if (maxCount2 > 4 * maxCount) {
-            return capital ? capitalize(correctWord2) : correctWord2;
+            return preserveCapitalization(correctWord2);
         }
-        return correctWord;
+        return preserveCapitalization(correctWord);
     }
 }
 
