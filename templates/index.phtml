@@ -83,18 +83,24 @@
                             <div class="text-rendering-controls">
                                 <button type="button" onclick="toggleRenderedText(this)" class="toggle-text">Hide Rendered Text</button>
                             </div>
-                            <canvas id="myCanvas" width="1000" height="1000">
+
+			   <canvas id="myCanvas" width="1000" height="1000">
                                 <img class="file-upload-image" src="#" id="myImage" max-width="500" max-height="500">
                             </canvas>
                             <div class="image-title-wrap">
                                 <button type="button" class= "translate-image" id="translateButton">Translate!!!</button>
                                 <button type="button" onclick="removeUpload()" class="remove-image">Remove <span class="image-title">Uploaded Image</span></button>
-                                <div class="ocr-result" id="result">
+				<div class="pdf-buttons">
+                                        <button id="pdf-prev">Previous</button>
+                                        <button id="pdf-next">Next</button>
+				</div>
+
+				<div class="ocr-result" id="result">
                                     <span class="progress-msg" id="progress"></span>
                                     <br><h6 class="ocr-result">OCR Result:</h6>
                                 </div>
                             </div><!-- end image-title-wrap -->
-                        </div><!-- end file-upload-content -->
+			</div><!-- end file-upload-content -->
                     </div><!-- end file-upload -->
                 </div> <!-- end col -->
             </div><!-- end row -->
