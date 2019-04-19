@@ -264,9 +264,9 @@ ajaxCall().then(textVar => {
 // console.log(WORD_COUNTS)
 
 //var fs = require("fs");
-//var corpus = String(fs.readFileSync('corpus'));
+//var dictionary = String(fs.readFileSync('dictionary'));
 async function ajaxCall() {
-    const corpus = await fetch('/corpus', {
+    const dictionary = await fetch('/dictionary.txt', {
         method: 'GET',
         headers: {
             'Content-Type': 'application/json'
@@ -274,7 +274,7 @@ async function ajaxCall() {
     }).then(response => response.text().then(t => t)).catch(error => {
         console.error(error);
     });
-    return corpus;
+    return dictionary;
 }
 
 /*
@@ -398,7 +398,7 @@ function correct(word) {
 
     for (var i = 0; i < editDistance2Words.length; i++) {
         if (editDistance2Words[i] in WORD_COUNTS) {
-            // console.log(editDistance2Words[i], WORD_COUNTS[editDistance2Words[i]])
+            //console.log(editDistance2Words[i], WORD_COUNTS[editDistance2Words[i]])
             if (WORD_COUNTS[editDistance2Words[i]] > maxCount2) {
                 maxCount2 = WORD_COUNTS[editDistance2Words[i]];
                 correctWord2 = editDistance2Words[i];
