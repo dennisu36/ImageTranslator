@@ -357,8 +357,14 @@ function editDistance1(word) {
  - Finally, if no good replacements are found, return the word.
  */
 function correct(word) {
+    function capitalize(word) {
+        return word.charAt(0).toUpperCase() + word.slice(1);
+    }
+
+    var capital = word.toLowerCase() === word;
+    word = word.toLowerCase();
     if (word in WORD_COUNTS) {
-        return word;
+        return capital ? capitalize(word) : word;
     }
 
     var maxCount = 0;
@@ -375,7 +381,7 @@ function correct(word) {
     for (var i = 0; i < editDistance1Words.length; i++) {
         // console.log(editDistance1Words[i])
         if (editDistance1Words[i] in WORD_COUNTS) {
-            console.log(editDistance1Words[i], WORD_COUNTS[editDistance1Words[i]])
+            // console.log(editDistance1Words[i], WORD_COUNTS[editDistance1Words[i]])
             if (WORD_COUNTS[editDistance1Words[i]] > maxCount) {
                 maxCount = WORD_COUNTS[editDistance1Words[i]];
                 correctWord = editDistance1Words[i];
@@ -388,7 +394,7 @@ function correct(word) {
 
     for (var i = 0; i < editDistance2Words.length; i++) {
         if (editDistance2Words[i] in WORD_COUNTS) {
-            console.log(editDistance2Words[i], WORD_COUNTS[editDistance2Words[i]])
+            // console.log(editDistance2Words[i], WORD_COUNTS[editDistance2Words[i]])
             if (WORD_COUNTS[editDistance2Words[i]] > maxCount2) {
                 maxCount2 = WORD_COUNTS[editDistance2Words[i]];
                 correctWord2 = editDistance2Words[i];
@@ -398,16 +404,15 @@ function correct(word) {
 
     if (word.length < 6) {
         if (maxCount2 > 100 * maxCount) {
-            return correctWord2
+            return capital ? capitalize(correctWord2) : correctWord2;
         }
         return correctWord;
     } else {
         if (maxCount2 > 4 * maxCount) {
-            return correctWord2
+            return capital ? capitalize(correctWord2) : correctWord2;
         }
         return correctWord;
     }
-    ;
 }
 
 /*
