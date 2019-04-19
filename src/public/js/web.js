@@ -363,7 +363,7 @@ function correct(word) {
     
     function preserveCapsAndPuncts(word) {
         word = capital ? capitalize(word) : word;
-        word = punctuation ? word.concat(punctuation) : word;
+        return punctuation ? word.concat(punctuation) : word;
     }
 
     var capital = word.toLowerCase() !== word;
