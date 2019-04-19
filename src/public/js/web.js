@@ -48,7 +48,7 @@ function initializeImageTranslateApp() {
         });
    
     }
-	    return {image: image, canvas: canvas};
+    return {image: image, canvas: canvas};
 }
 
 
@@ -94,8 +94,6 @@ function initializeOCR() {
 */
 
 
-
-
 var validTypes = ['jpg', 'jpeg', 'png', 'pdf'];
 function readURL(input) {
     if (input.files && input.files[0]) {
@@ -104,27 +102,13 @@ function readURL(input) {
         if (isSuccess) {
             var reader = new FileReader();
             if(extension == 'pdf' ){
-//                alert("TODO convert the PDF to an image and load it into the image container.");
-//		showPDF(URL.createObjectURL($('.file-upload-input').get(0).files[0]));
-		//showPage(2);
-
 		var image1 = URL.createObjectURL($('.file-upload-input').get(0).files[0]);
 		showPDF(image1);
-		 /*
-		reader.onload = function(a) {
-                $('.image-upload-wrap').hide();
-                $('myImage).attr('src', a.target.result);
-                $('.file-upload-content').show();
-                $('.image-title').html(input.files[0].name);
-            };
-		reader.readAsDataURL(input.files[0]);
-
-*/
-
-           } else if (extension == 'jpg', 'png', 'jpeg') {
+		
+            } else if (extension == 'jpg', 'png', 'jpeg') {
                 //alert('You have inserted an image.');
-	      //Nothing else to do here because the image .onload function initiates OCR
-	   }
+                //Nothing else to do here because the image .onload function initiates OCR
+            }
             reader.onload = function(e) {
                 $('.image-upload-wrap').hide();
                 $('#myImage').attr('src', e.target.result);
@@ -132,10 +116,9 @@ function readURL(input) {
                 $('.image-title').html(input.files[0].name);
             };
 	   
-           reader.readAsDataURL(input.files[0]);
-        
-	   
-	   } else {
+            reader.readAsDataURL(input.files[0]);
+      
+        } else {
             alert('Invalid File Type. Please insert JPG, JPEG, PNG, or PDF files.');
             removeUpload();
         }
@@ -144,63 +127,53 @@ function readURL(input) {
 }
 //read pdf file
 var __PDF_DOC,
-        __CURRENT_PAGE,
-        __TOTAL_PAGES,
-        __PAGE_RENDERING_IN_PROGRESS = 0,
-        __CANVAS = $('#myCanvas').get(0),
-	//__CANVAS = document.getElementById('#myImage'),
-        __CANVAS_CTX = __CANVAS.getContext('2d');
+__CURRENT_PAGE,
+__TOTAL_PAGES,
+__PAGE_RENDERING_IN_PROGRESS = 0,
+__CANVAS = document.createElement('canvas'),
+__CANVAS_CTX = __CANVAS.getContext('2d');
+
+//invisible canvas is huge so PDF renders at a nice resolution
+__CANVAS.width = 2000;
+__CANVAS.height = 2000;
 
 function showPDF(pdf_url) {
-//	var reader = new FileReader();
-	
-	PDFJS.getDocument({ url: pdf_url }).then(function(pdf_doc) {
+    console.log("In showPDF()");
+    
+    PDFJS.getDocument({ url: pdf_url }).then(function(pdf_doc) {
                  __PDF_DOC = pdf_doc;
 
-	//	$('.file-upload-content').show();
-	//	showPage(1);
+    showPage(1);
+    
+    }).catch(function(error){
 
-/*	
-	 reader.onload = function(e) {
-        $('.image-upload-wrap').hide();
-        $('#myImage').attr('src', e.target.result);
-        $('.file-upload-content').show();
-        $('.image-title').html(input.files[0].name);
-        };
-
-*/
-       // reader.readAsDataURL(input.files[0]);
-	showPage(1);
-	
-	
-	}).catch(function(error){
-
-		console.log(error.message);
-		alert(error.message);
-	});;
-
+        console.log(error.message);
+        alert(error.message);
+    });
 
 }
 
 function showPage(page_no){
+    console.log("In showPage()");
+    __PAGE_RENDERING_IN_PROGRESS =1;
+    __CURRENT_PAGE = page_no;
 
-	__PAGE_RENDERING_IN_PROGRESS =1;
-	__CURRENT_PAGE = page_no;
+    __PDF_DOC.getPage(page_no).then(function(page) {
 
-	__PDF_DOC.getPage(page_no).then(function(page){
+        var scale_required = __CANVAS.width / page.getViewport(1).width;
 
-		var scale_required = __CANVAS.width / page.getViewport(1).width;
+        var viewport = page.getViewport(scale_required);
 
-		var viewport = page.getViewport(scale_required);
+        __CANVAS.height = viewport.height;
 
-		__CANVAS.height = viewport.height;
-
-		var renderContext = {
-			canvasContext: __CANVAS_CTX,
-			viewport: viewport
-		};
-		 page.render(renderContext).then(function() {
-           		 __PAGE_RENDERING_IN_PROGRESS = 0;
+        var renderContext = {
+            canvasContext: __CANVAS_CTX,
+            viewport: viewport
+        };
+        page.render(renderContext).then(function() {
+            __PAGE_RENDERING_IN_PROGRESS = 0;
+            console.log("Attempting to put canvas contents into img.");
+            imageTranslateApp.image.src = __CANVAS.toDataURL();
         });
     });
 }
