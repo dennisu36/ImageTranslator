@@ -365,7 +365,7 @@ function correct(word) {
         return capital ? capitalize(word) : word;
     }
 
-    var capital = word.toLowerCase() === word;
+    var capital = word.toLowerCase() !== word;
     word = word.toLowerCase();
     if (word in WORD_COUNTS) {
         return preserveCapitalization(word);
