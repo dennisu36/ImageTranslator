@@ -417,7 +417,7 @@ function autoCorrect() {
     var inputWords = document.getElementById('result').value;
     var input = inputWords.trim().split(/\s+/);
     var i;
-    for (i = 0; i < input.length; i) {
+    for (i = 0; i < input.length; i++) {
         var word = input[i];
         var correction = correct(word);
         if (correction === word) {
