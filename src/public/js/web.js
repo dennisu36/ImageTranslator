@@ -46,9 +46,55 @@ function initializeImageTranslateApp() {
             $('#result').text(removeJunkText(result.text));
             handleOCRResult(result);
         });
+   
     }
-    return {image: image, canvas: canvas};
+	    return {image: image, canvas: canvas};
 }
+
+
+/*
+function initializeOCR() {
+
+ //Start setting Tesseract options
+        tessOptions = {
+            tessedit_pageseg_mode: 1
+        };
+        
+        //make Tesseract match with source language that is selected
+        const srcLang = document.getElementById('language-src-select').value;
+        if (srcLang == 'chinese') {
+            tessOptions.lang = 'chi_sim';
+        } else if (srcLang == 'french') {
+            tessOptions.lang ='fra';
+        } else {
+            tessOptions.lang = 'eng';
+        }
+
+        if (tessOptions.lang == 'eng' || tessOptions.lang == 'fra') {
+            //This probably obviates the removeJunkText() function mostly, but I guess that can still
+            //get rid of stray consonants that aren't part of words.
+            tessOptions.tessedit_char_whitelist = "ABCDEFGHIJKLMNOPQRSTUVWYZabcdefghijklmnopqrstuvwxyz1234567890.?!"
+        }
+
+        console.log("loaded...", "$$$$");
+        Tesseract.recognize(image,tessOptions)
+        .progress((progress) => {
+            console.log(progress, "$$$$");
+            if (progress.hasOwnProperty('progress')) {
+                $('#progress').text(progress.status + ": " + (progress.progress * 100).toFixed(0) + " %");
+            } else {
+                $('#progress').text(progress.status);
+            }
+        }).then((result) => {
+            console.log(result, "$$$$");
+            $('#result').text(removeJunkText(result.text));
+            handleOCRResult(result);
+        });
+}
+*/
+
+
+
 
 var validTypes = ['jpg', 'jpeg', 'png', 'pdf'];
 function readURL(input) {
