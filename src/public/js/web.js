@@ -44,6 +44,8 @@ function initializeImageTranslateApp() {
                 }).then((result) => {
             console.log(result, "$$$$");
             $('#result').text(removeJunkText(result.text));
+		result.text= autoCorrect(result.text);
+	    $('#result').text(result.text);
             handleOCRResult(result);
         });
     }
@@ -112,7 +114,7 @@ function handleOCRResult(result) {
         obj.text = removeJunkText(line.text);
         obj.source_language = srcLang;
         obj.destination_language = destLang;
-	autoCorrect(obj);
+	//autoCorrect(obj);
         return obj;
     });
 
@@ -423,8 +425,8 @@ function correct(word) {
 /*
  This script runs your spellchecker on every input you provide.
  */
-function autoCorrect() {
-    var inputWords = document.getElementById('result').value;
+function autoCorrect(inputWords) {
+    //var inputWords = document.getElementById('result').value;
     var input = inputWords.trim().split(/\s+/);
     var i;
     for (i = 0; i < input.length; i++) {
@@ -442,6 +444,7 @@ function autoCorrect() {
             input[i] = correction;
         }
     }
-    document.getElementById("result").value = input.join(" ");
+    //document.getElementById("result").value = input.join(" ");
     console.log("\nSpellcheck Finished!");
+    return input.join(" ");
 }
