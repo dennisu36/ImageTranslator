@@ -17,7 +17,8 @@ class AmazonTranslate implements TranslatorInterface {
 
         $languageConversion = [
             'arabic' => 'ar',
-            'chinese' => 'zh',
+            'chinese_simplified' => 'zh',
+            'chinese_traditional' => 'zh-TW',
             'czech' => 'cs',
             'danish' => 'da',
             'dutch' => 'nl',
