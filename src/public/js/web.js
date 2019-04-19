@@ -253,6 +253,16 @@ function removeJunkText(inString) {
     return inString;
 }
 
+console.log("\nInitializing spellchecker!\n");
+const ALPHABET = "abcdefghijklmnopqrstuvwxyz";
+var WORD_COUNTS;
+ajaxCall().then(textVar => {
+    //console.log(textVar)
+    WORD_COUNTS = getWordCounts(textVar);
+    console.log("\Finished initializing spellchecker!\n");
+});
+// console.log(WORD_COUNTS)
+
 //var fs = require("fs");
 //var corpus = String(fs.readFileSync('corpus'));
 async function ajaxCall() {
@@ -266,12 +276,6 @@ async function ajaxCall() {
     });
     return corpus;
 }
-// ajaxCall().then(textVar => {
-//console.log(textVar)
-console.log("\nInitializing spellchecker!\n");
-//});
-
-//console.log("\nInitializing spellchecker!\n");
 
 /*
  Returns an object with each unique word in the input as a key,
@@ -291,10 +295,6 @@ function getWordCounts(text) {
     }
     return resultObj;
 }
-
-var WORD_COUNTS = getWordCounts('/corpus');
-// console.log(WORD_COUNTS)
-var alphabet = "abcdefghijklmnopqrstuvwxyz";
 
 /*
  Returns the set of all strings 1 edit distance away from the input word.
