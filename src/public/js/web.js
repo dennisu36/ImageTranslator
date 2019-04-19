@@ -75,7 +75,6 @@ function initializeImageTranslateApp() {
                 //get rid of stray consonants that aren't part of words.
                 tessOptions.tessedit_char_whitelist = "ABCDEFGHIJKLMNOPQRSTUVWYZabcdefghijklmnopqrstuvwxyz1234567890.?!"
             }
-
             console.log("loaded...", "$$$$");
             tesseractRecognize(clippedImage, tessOptions);
         }
@@ -102,6 +101,48 @@ function tesseractRecognize(imageInput, options) {
     });
 }
 
+
+/*
+function initializeOCR() {
+
+ //Start setting Tesseract options
+        tessOptions = {
+            tessedit_pageseg_mode: 1
+        };
+        
+        //make Tesseract match with source language that is selected
+        const srcLang = document.getElementById('language-src-select').value;
+        if (srcLang == 'chinese') {
+            tessOptions.lang = 'chi_sim';
+        } else if (srcLang == 'french') {
+            tessOptions.lang ='fra';
+        } else {
+            tessOptions.lang = 'eng';
+        }
+
+        if (tessOptions.lang == 'eng' || tessOptions.lang == 'fra') {
+            //This probably obviates the removeJunkText() function mostly, but I guess that can still
+            //get rid of stray consonants that aren't part of words.
+            tessOptions.tessedit_char_whitelist = "ABCDEFGHIJKLMNOPQRSTUVWYZabcdefghijklmnopqrstuvwxyz1234567890.?!"
+        }
+
+        console.log("loaded...", "$$$$");
+        Tesseract.recognize(image,tessOptions)
+        .progress((progress) => {
+            console.log(progress, "$$$$");
+            if (progress.hasOwnProperty('progress')) {
+                $('#progress').text(progress.status + ": " + (progress.progress * 100).toFixed(0) + " %");
+            } else {
+                $('#progress').text(progress.status);
+            }
+        }).then((result) => {
+            console.log(result, "$$$$");
+            $('#result').text(removeJunkText(result.text));
+            handleOCRResult(result);
+        });
+}
+*/
+
 var validTypes = ['jpg', 'jpeg', 'png', 'pdf'];
 function readURL(input) {
     if (input.files && input.files[0]) {
@@ -109,8 +150,9 @@ function readURL(input) {
         isSuccess = validTypes.indexOf(extension) > -1;
         if (isSuccess) {
             var reader = new FileReader();
-            if (extension == 'pdf'){
-                alert("TODO convert the PDF to an image and load it into the image container.");
+            if(extension == 'pdf' ){
+		var image1 = URL.createObjectURL($('.file-upload-input').get(0).files[0]);
+		showPDF(image1);
             } else if (extension == 'jpg', 'png', 'jpeg') {
                 //alert('You have inserted an image.');
                 //Nothing else to do here because the image .onload function initiates OCR
@@ -122,12 +164,67 @@ function readURL(input) {
                 $('.text-rendering-controls').hide();
                 $('.image-title').html(input.files[0].name);
             };
+	   
             reader.readAsDataURL(input.files[0]);
+      
         } else {
             alert('Invalid File Type. Please insert JPG, JPEG, PNG, or PDF files.');
             removeUpload();
         }
     }
+
+}
+//read pdf file
+var __PDF_DOC,
+__CURRENT_PAGE,
+__TOTAL_PAGES,
+__PAGE_RENDERING_IN_PROGRESS = 0,
+__CANVAS = document.createElement('canvas'),
+__CANVAS_CTX = __CANVAS.getContext('2d');
+
+//invisible canvas is huge so PDF renders at a nice resolution
+__CANVAS.width = 2000;
+__CANVAS.height = 2000;
+
+function showPDF(pdf_url) {
+    console.log("In showPDF()");
+    
+    PDFJS.getDocument({ url: pdf_url }).then(function(pdf_doc) {
+                 __PDF_DOC = pdf_doc;
+
+    showPage(1);
+    
+    }).catch(function(error){
+
+        console.log(error.message);
+        alert(error.message);
+    });
+
+}
+
+function showPage(page_no){
+    console.log("In showPage()");
+    __PAGE_RENDERING_IN_PROGRESS =1;
+    __CURRENT_PAGE = page_no;
+
+    __PDF_DOC.getPage(page_no).then(function(page) {
+
+        var scale_required = __CANVAS.width / page.getViewport(1).width;
+
+        var viewport = page.getViewport(scale_required);
+
+        __CANVAS.height = viewport.height;
+
+        var renderContext = {
+            canvasContext: __CANVAS_CTX,
+            viewport: viewport
+        };
+        page.render(renderContext).then(function() {
+            __PAGE_RENDERING_IN_PROGRESS = 0;
+            console.log("Attempting to put canvas contents into img.");
+            imageTranslateApp.image.src = __CANVAS.toDataURL();
+        });
+    });
 }
 
 function removeUpload() {
@@ -191,7 +288,6 @@ async function translateReq(textList) {
     /*
      @desc
      Performs an AJAX request to the /translate url using http POST method.
-
      @param object textList
      This is a javascript object that contains a list of objects containing text as well as meta data describing translating preferences. For example:
      const textList = [
@@ -202,7 +298,6 @@ async function translateReq(textList) {
              text: 'Bellum est malo'
          }
      ];
-
      @return
      A javascript object that contains a list of objects containing the translated text as well as meta data describing the translation. This data is received from the server over AJAX. For example:
      const textList = [
@@ -213,7 +308,6 @@ async function translateReq(textList) {
              translated_text: 'War is bad'
          }
      ];
-
      @throws Exception on unsuccessful network connection to the server.
      */
 
@@ -312,10 +406,8 @@ function removeJunkText(inString) {
      Removes stray/junk characters from the input string and returns the cleaned string.
      This does make some assumptions about the intended content of the original text, so might not
      be appropriate for all inputs.
-
      @param string inString
      A string to clean up.
-
      @return string
     */
 
