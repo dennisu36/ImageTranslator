@@ -415,8 +415,10 @@ function correct(word) {
  */
 function autoCorrect() {
     var inputWords = document.getElementById('result').value;
-    var input = inputWords.split(" ");
-    var output = input.map(function (word) {
+    var input = inputWords.trim().match(/\S+/g);
+    var i;
+    for (i = 0; i < input.length; i) {
+        var word = input[i];
         var correction = correct(word);
         if (correction === word) {
             //return " - " + word + " is spelled correctly.";
@@ -427,10 +429,9 @@ function autoCorrect() {
         } else {
             //return " - " + word + " should be spelled as " + correction + ".";
             console.log(word + " should be spelled as " + correction + ".");
+            input[i] = correction;
         }
-        var res = inputWords.replace(inputWords, correction);
-        document.getElementById("result").value = res;
-        console.log("\nSpellcheck Finished!");
-    });
+    }
+    document.getElementById("result").value = input.join(" ");
+    console.log("\nSpellcheck Finished!");
 }
-
