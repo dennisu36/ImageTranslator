@@ -307,8 +307,10 @@ async function handleServerResponse(textList, boundingBoxes) {
         console.log(bbox);
         var width = bbox.x1 - bbox.x0;
         var height = bbox.y1 - bbox.y0;
-        renderText(text.translated_text, text.destination_language,
-                   bbox.x0, bbox.y0, width, height);
+        if (!("error" in text)) { //if the response has "error" key, don't bother rendering this line
+            renderText(text.translated_text, text.destination_language,
+                bbox.x0, bbox.y0, width, height);
+        }
     }
     $('.text-rendering-controls').show();
 }
