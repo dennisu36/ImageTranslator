@@ -112,6 +112,7 @@ function handleOCRResult(result) {
         obj.text = removeJunkText(line.text);
         obj.source_language = srcLang;
         obj.destination_language = destLang;
+	autoCorrect(obj);
         return obj;
     });
 
