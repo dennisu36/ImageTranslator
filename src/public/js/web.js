@@ -266,7 +266,7 @@ ajaxCall().then(textVar => {
 //var fs = require("fs");
 //var dictionary = String(fs.readFileSync('dictionary'));
 async function ajaxCall() {
-    const dictionary = await fetch('/dictionary.txt', {
+    const dictionary = await fetch('/dictionary2.txt', {
         method: 'GET',
         headers: {
             'Content-Type': 'application/json'
