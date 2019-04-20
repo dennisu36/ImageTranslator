@@ -4,7 +4,7 @@ function initializeImageTranslateApp() {
     const canvas = new fabric.Canvas('myCanvas');
     canvas.setHeight(600);
     canvas.setWidth(600);
-  
+
     image.onload = function() {
         let doImageMasking = (document.getElementById('masking-select').value === 'true');
 
@@ -16,7 +16,7 @@ function initializeImageTranslateApp() {
 
         if (doImageMasking) {
             canvas.isDrawingMode = true;
-            canvas.freeDrawingBrush.width = 40;
+            canvas.freeDrawingBrush.width = 50;
             canvas.freeDrawingBrush.color = 'rgba(0,255,63, .45)';
         }
 
@@ -51,45 +51,121 @@ function initializeImageTranslateApp() {
                 clippedImage = canvas.toDataURL();
             }
 
-            //Start setting Tesseract options
             tessOptions = {
-                tessedit_pageseg_mode: 12
+                tessedit_pageseg_mode: 1
             };
-            
-            //make Tesseract match with source language that is selected
+
+            //Determine OCR method by which language is selected
             const srcLang = document.getElementById('language-src-select').value;
-            if (srcLang == 'chinese') {
-                tessOptions.lang = 'chi_sim';
-            } else if (srcLang == 'french') {
-                tessOptions.lang ='fra';
-            } else {
-                tessOptions.lang = 'eng';
-            }
+            console.log("srcLang: " + srcLang);
+            const ocrMethod = getOCRMethodBySourceLanguage(srcLang);
 
-            if (tessOptions.lang == 'eng' || tessOptions.lang == 'fra') {
-                //This probably obviates the removeJunkText() function mostly, but I guess that can still
-                //get rid of stray consonants that aren't part of words.
-                tessOptions.tessedit_char_whitelist = "ABCDEFGHIJKLMNOPQRSTUVWYZabcdefghijklmnopqrstuvwxyz1234567890.?!"
-            }
-
-            console.log("loaded...", "$$$$");
-            Tesseract.recognize(clippedImage,tessOptions)
-            .progress((progress) => {
-                console.log(progress, "$$$$");
-                if (progress.hasOwnProperty('progress')) {
-                    $('#progress').text(progress.status + ": " + (progress.progress * 100).toFixed(0) + " %");
-                } else {
-                    $('#progress').text(progress.status);
+            console.log("Using OCR method: " + ocrMethod);
+            if (ocrMethod === "rekognize") {
+                console.log("Using backend for OCR. Image dimensions: (" + image.width + "," + image.height + ")");
+                console.log(clippedImage.split(',')[1])
+                backendOCR(clippedImage.split(',')[1], canvas.width, canvas.height); //split off the base64 header from img.src because Amazon doesn't like it
+            } else { //use tesseract
+                if (srcLang == 'chinese_simplified') {
+                    tessOptions.lang = 'chi_sim';
                 }
-            }).then((result) => {
-                console.log(result, "$$$$");
-                $('#result').text(removeJunkText(result.text));
-                handleOCRResult(result);
-            });
+                else if (srcLang == 'chinese_traditional') {
+                    tessOptions.lang = 'chi_tra';
+                }
+                else if (srcLang == 'arabic') {
+                    tessOptions.lang ='ara';
+                }
+                else if (srcLang == 'russian') {
+                    tessOptions.lang ='rus';
+                }
+                else if (srcLang == 'korean') {
+                    tessOptions.lang ='kor';
+                }
+                else if (srcLang == 'japanese') {
+                    tessOptions.lang ='jpn';
+                }
+                else {
+                    tessOptions.lang = 'eng';
+                }
+
+                if (tessOptions.lang == 'eng') {
+                    //This probably obviates the removeJunkText() function mostly, but I guess that can still
+                    //get rid of stray consonants that aren't part of words.
+                    tessOptions.tessedit_char_whitelist = "ABCDEFGHIJKLMNOPQRSTUVWYZabcdefghijklmnopqrstuvwxyz1234567890.?!"
+                }
+
+                tesseractRecognize(clippedImage, tessOptions);
+            }
         }
     }
-    
     return {image: image, canvas: canvas};
+}
+
+/* Returns the OCR method to be used for a particular language. All latin-text
+ * lanuages return "rekognize", everything else returns "tesseract".
+ * 
+ * @param string srcLang the name of the language to check OCR method for
+ * @returns string either "rekognize" or "tesseract"
+ */
+function getOCRMethodBySourceLanguage(srcLang) {
+    const latinLangs = ['auto', 'czech', 'danish', 'dutch', 'english', 'finnish', 'french', 'german', 'indonesian', 'italian', 'polish', 'portugese', 'spanish', 'swedish', 'turkish'];
+
+    if (latinLangs.includes(srcLang.toLowerCase()) && imageTranslateApp.pdf == false) {
+        return "rekognize";
+    }
+    return "tesseract";
+}
+
+function tesseractRecognize(imageInput, options) {
+    Tesseract.recognize(imageInput,options)
+    .progress((progress) => {
+        console.log(progress, "$$$$");
+        if (progress.hasOwnProperty('progress')) {
+            $('#progress').text(progress.status + ": " + (progress.progress * 100).toFixed(0) + " %");
+        } else {
+            $('#progress').text(progress.status);
+        }
+    }).then((result) => {
+        console.log(result, "$$$$");
+
+        //TODO FIXME this deletes the #progress span inside so progress doesn't get shown the next time around.
+        $('#result').text(removeJunkText(result.text));
+        handleOCRResult(result);
+    });
+}
+
+/* Make an OCR request to the backend which uses some 3rd party API.
+ * In particular the backend uses Amazon Rekognition for now, but the frontend
+ * shouldn't need to know those details. */
+function backendOCR(base64Image, imageWidth, imageHeight) {
+    ocrReq({image: base64Image})
+        .then(lines => {
+            lines.lines = lines;
+            for (var idx = 0; idx < lines.lines.length; idx++) {
+                lines.lines[idx].bbox.x0 = Math.round(lines.lines[idx].bbox.x0 * imageWidth);
+                lines.lines[idx].bbox.x1 = Math.round(lines.lines[idx].bbox.x1 * imageWidth);
+                lines.lines[idx].bbox.y0 = Math.round(lines.lines[idx].bbox.y0 * imageHeight);
+                lines.lines[idx].bbox.y1 = Math.round(lines.lines[idx].bbox.y1 * imageHeight);
+            }
+            console.log(lines);
+            handleOCRResult(lines);
+        })
+        .catch(error => {
+            console.error(error);
+        });
+}
+
+async function ocrReq(data) {
+    const res = await fetch('/ocr', { 
+        method: 'POST', 
+        body: JSON.stringify(data),
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    }).then(response => response.json()).catch(error => {
+        console.error(error);
+    });
+    return res;
 }
 
 var validTypes = ['jpg', 'jpeg', 'png', 'pdf'];
@@ -99,34 +175,123 @@ function readURL(input) {
         isSuccess = validTypes.indexOf(extension) > -1;
         if (isSuccess) {
             var reader = new FileReader();
-            if(extension == 'pdf'){
-                alert("TODO convert the PDF to an image and load it into the image container.");
+            if(extension == 'pdf' ){
+		var image1 = URL.createObjectURL($('.file-upload-input').get(0).files[0]);
+		showPDF(image1);
+
+                reader.onload = function(e) {
+                    $('.image-upload-wrap').hide();
+                    $('#myImage').attr('src', e.target.result);
+                    $('.file-upload-content').show();
+                    $('.pdf-buttons').show();
+                    $('.text-rendering-controls').hide();
+                    $('.image-title').html(input.files[0].name);
+                };
+
+                reader.readAsDataURL(input.files[0]);
+
+		imageTranslateApp.pdf = true;
             } else if (extension == 'jpg', 'png', 'jpeg') {
+		imageTranslateApp.pdf = false;
                 //alert('You have inserted an image.');
                 //Nothing else to do here because the image .onload function initiates OCR
+                reader.onload = function(e) {
+                    $('.image-upload-wrap').hide();
+                    $('#myImage').attr('src', e.target.result);
+                    $('.file-upload-content').show();
+                    $('.pdf-buttons').hide();
+                    $('.text-rendering-controls').hide();
+                    $('.image-title').html(input.files[0].name);
+                };
+	   
+                reader.readAsDataURL(input.files[0]);
             }
-            reader.onload = function(e) {
-                $('.image-upload-wrap').hide();
-                $('#myImage').attr('src', e.target.result);
-                $('.file-upload-content').show();
-                $('.image-title').html(input.files[0].name);
-                input.value = null; // Clear file input to trigger onchange on same file
-            };
-            reader.readAsDataURL(input.files[0]);
         } else {
             alert('Invalid File Type. Please insert JPG, JPEG, PNG, or PDF files.');
             removeUpload();
         }
     }
+
 }
+
+//read pdf file
+var __PDF_DOC,
+__CURRENT_PAGE,
+__TOTAL_PAGES,
+__PAGE_RENDERING_IN_PROGRESS = 0,
+__CANVAS = document.createElement('canvas'),
+__CANVAS_CTX = __CANVAS.getContext('2d');
+
+//invisible canvas is huge so PDF renders at a nice resolution
+__CANVAS.width = 2000;
+__CANVAS.height = 2000;
+
+function showPDF(pdf_url) {
+    console.log("In showPDF()");
+    
+    PDFJS.getDocument({ url: pdf_url }).then(function(pdf_doc) {
+        __PDF_DOC = pdf_doc;
+	__TOTAL_PAGES = __PDF_DOC.numPages;
+    
+	    $("#pdf-buttons").show();
+	    
+	    
+	    showPage(1);
+    
+    }).catch(function(error){
+
+        console.log(error.message);
+        alert(error.message);
+    });
+}
+
+function showPage(page_no){
+    console.log("In showPage()");
+    __PAGE_RENDERING_IN_PROGRESS =1;
+    __CURRENT_PAGE = page_no;
+
+    __PDF_DOC.getPage(page_no).then(function(page) {
+
+        var scale_required = __CANVAS.width / page.getViewport(1).width;
+
+        var viewport = page.getViewport(scale_required);
+
+        __CANVAS.height = viewport.height;
+
+        var renderContext = {
+            canvasContext: __CANVAS_CTX,
+            viewport: viewport
+        };
+        page.render(renderContext).then(function() {
+            __PAGE_RENDERING_IN_PROGRESS = 0;
+            console.log("Attempting to put canvas contents into img.");
+            imageTranslateApp.image.src = __CANVAS.toDataURL();
+	});
+    });
+}
+
+$("#pdf-prev").on('click', function() {
+    if(__CURRENT_PAGE != 1)
+        showPage(--__CURRENT_PAGE);
+});
+
+$("#pdf-next").on('click', function() {
+    if(__CURRENT_PAGE != __TOTAL_PAGES)
+        showPage(++__CURRENT_PAGE);
+});
 
 function removeUpload() {
     $('.file-upload-input').replaceWith($('.file-upload-input').clone());
     $('.file-upload-content').hide();
     $('.image-upload-wrap').show();
+    console.log(imageTranslateApp.canvas.getObjects());
     imageTranslateApp.canvas.remove(...imageTranslateApp.canvas.getObjects());
     $('#myImage').attr('src', '');
+    $('.toggle-text').html("Hide Rendered Text");
+    imageTranslateApp.canvas.setWidth(600);
+    imageTranslateApp.canvas.setHeight(600);
     console.log("Removed image");
+    imageTranslateApp.canvas.isDrawingMode = true;
 }
 
 $('.image-upload-wrap').bind('dragover', function () {
@@ -177,7 +342,6 @@ async function translateReq(textList) {
     /*
      @desc
      Performs an AJAX request to the /translate url using http POST method.
-
      @param object textList
      This is a javascript object that contains a list of objects containing text as well as meta data describing translating preferences. For example:
      const textList = [
@@ -188,7 +352,6 @@ async function translateReq(textList) {
              text: 'Bellum est malo'
          }
      ];
-
      @return
      A javascript object that contains a list of objects containing the translated text as well as meta data describing the translation. This data is received from the server over AJAX. For example:
      const textList = [
@@ -199,7 +362,6 @@ async function translateReq(textList) {
              translated_text: 'War is bad'
          }
      ];
-
      @throws Exception on unsuccessful network connection to the server.
      */
 
@@ -224,13 +386,18 @@ async function handleServerResponse(textList, boundingBoxes) {
         console.log(bbox);
         var width = bbox.x1 - bbox.x0;
         var height = bbox.y1 - bbox.y0;
-        renderText(text.translated_text, bbox.x0, bbox.y0, width, height);
+        if (!("error" in text)) { //if the response has "error" key, don't bother rendering this line
+            renderText(text.translated_text, text.destination_language,
+                bbox.x0, bbox.y0, width, height);
+        }
     }
+    $('.text-rendering-controls').show();
 }
 
 
-function renderText(textInput, X, Y, textboxWidth, textboxHeight) {
-    console.log(textInput + " at " + X + "," + Y + " width: " + textboxWidth + " height: " + textboxHeight);
+function renderText(textInput, destLang, X, Y, textboxWidth, textboxHeight) {
+    console.log(textInput + " in " + destLang + " at " + X + "," + Y +
+            " width: " + textboxWidth + " height: " + textboxHeight);
     
     var fImage = imageTranslateApp.canvas.backgroundImage;
 
@@ -254,11 +421,33 @@ function renderText(textInput, X, Y, textboxWidth, textboxHeight) {
     });
     
     var fontSizeVertical = textboxHeight;
-    var fontSizeHorizontal = textboxWidth / textInput.length / 0.55;
+    var fontSizeHorizontal = textboxWidth / textInput.length;
+    if (destLang === "zh") {
+        fontSizeHorizontal /= 0.9;
+    } else {
+        fontSizeHorizontal /= 0.55;
+    }
     text.fontSize = fontSizeVertical > fontSizeHorizontal ? fontSizeHorizontal : fontSizeVertical;
 
     imageTranslateApp.canvas.add(rect);
     imageTranslateApp.canvas.add(text);
+}
+
+function toggleRenderedText(button) {
+    var numObjects = imageTranslateApp.canvas.getObjects().length;
+    var i;
+    for (i = 1; i < numObjects; i++) {
+        var item = imageTranslateApp.canvas.item(i);
+        item.visible = !item.visible;
+    }
+    imageTranslateApp.canvas.renderAll();
+    if (button.innerHTML.startsWith("Hide")) {
+        button.innerHTML = "Show Rendered Text";
+        console.log("Hid rendered text");
+    } else {
+        button.innerHTML = "Hide Rendered Text";
+        console.log("Showed rendered text");
+    }
 }
 
 function removeJunkText(inString) {
@@ -267,10 +456,8 @@ function removeJunkText(inString) {
      Removes stray/junk characters from the input string and returns the cleaned string.
      This does make some assumptions about the intended content of the original text, so might not
      be appropriate for all inputs.
-
      @param string inString
      A string to clean up.
-
      @return string
     */
 
