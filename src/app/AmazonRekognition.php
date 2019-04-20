@@ -12,6 +12,18 @@ use Aws\Exception\AwsException;
  * @author jaywalker
  */
 class AmazonRekognition implements OCRInterface {
+
+    private function convertOCRResponseToTesseractFormat($rekognitionResponse) {
+        $newAry = [];
+        foreach ($rekognitionResponse as $responseKey => $lineData) {
+            $newAry += [
+                "text" => $lineData['DetectedText'],
+                "bbox" => $lineData['BoundingBox']
+            ];
+        }
+        return $newAry;
+    }
+
     public function getTranslation($base64EncodedImage) {
 	$client = new Aws\Rekognition\RekognitionClient([
             'profile' => 'default',
@@ -20,23 +32,17 @@ class AmazonRekognition implements OCRInterface {
 	]);
 
 	$result = $client->detectText([
-            'Image' => [ //instead of file_get_contents(image), you can put in the base64 string of the image and it will work the same.
-                'Bytes' => base64_decode(file_get_contents($base64EncodedImage)),
+            'Image' => [
+                'Bytes' => base64_decode($base64EncodedImage),
             ],
 	]);
 
 	$textReceived = $result;
 	//Rekognition gives you an array of lines and words and to make it not repeat it only prints it if it is a word, not a line of text.
-	$count=0;
-	for($n=0;$n<sizeOf($textReceived['TextDetections']); $n++){
-            if($textReceived['TextDetections'][$n]['Type'] == 'LINE'){
-                //print_r($textReceived['TextDetections'][$n]['DetectedText']);
-                //print_r(" ");
-                //combines the words into a new array starting at index 0.
-                //old code to pass just the detected text down
-                //$textToBePassed['TextDetections'][$count]['DetectedText'] = $textReceived['TextDetections'][$n]['DetectedText'];
-
-
+	$count = 0;
+        $textToBePassed = [];
+	for($n = 0;$n < sizeOf($textReceived['TextDetections']); $n++) {
+            if($textReceived['TextDetections'][$n]['Type'] == 'LINE') {
                 //Creates a new array that takes the detectedtext per line and the boundingbox paramaters and puts them into a new array...
                 //...called $textToBePassed. This will be the array sent back to the client.
                 $textToBePassed[$count] = [
@@ -46,6 +52,6 @@ class AmazonRekognition implements OCRInterface {
                 $count++;
             }
 	}
-	return $textToBePassed;
+	return $this->convertOCRResponseToTesseractFormat($textToBePassed);
     }
 }

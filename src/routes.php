@@ -32,3 +32,8 @@ $app->post('/translate', function (Request $request, Response $response, array $
 
     return $response->withJson($translationResult, 200);
 });
+
+$app-post('/rekognition', function (Request $request, Response $response, array $args) {
+
+    return $response->withStatus(200);
+});

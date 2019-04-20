@@ -110,4 +110,10 @@ class RoutesTest extends BaseTestCase
         $response = $this->runApp('GET', '/good');
         $this->assertEquals(200, $response->getStatusCode());
     }
+
+    public function testRekognitionRequest()
+    {
+        $response = $this->runApp('POST', '/rekognition');
+        $this->assertEquals(200, $response->getStatusCode());
+    }
 }
