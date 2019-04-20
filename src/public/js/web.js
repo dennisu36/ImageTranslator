@@ -33,30 +33,29 @@ function initializeImageTranslateApp() {
                 console.log("Using backend for OCR. Image dimensions: (" + image.width + "," + image.height + ")");
                 backendOCR(image.src.split(',')[1], image.width, image.height); //split off the base64 header from img.src because Amazon doesn't like it
             } else { //use tesseract
+                if (srcLang == 'chinese_simplified') {
+                    tessOptions.lang = 'chi_sim';
+                }
+                else if (srcLang == 'chinese_traditional') {
+                    tessOptions.lang = 'chi_tra';
+                }
+                else if (srcLang == 'arabic') {
+                    tessOptions.lang ='ara';
+                }
+                else if (srcLang == 'russian') {
+                    tessOptions.lang ='rus';
+                }
+                else if (srcLang == 'korean') {
+                    tessOptions.lang ='kor';
+                }
+                else if (srcLang == 'japanese') {
+                    tessOptions.lang ='jpn';
+                }
+                else {
+                    tessOptions.lang = 'eng';
+                }
 
-            if (srcLang == 'chinese_simplified') {
-                tessOptions.lang = 'chi_sim';
-            }
-            else if (srcLang == 'chinese_traditional') {
-                tessOptions.lang = 'chi_tra';
-            }
-            else if (srcLang == 'arabic') {
-                tessOptions.lang ='ara';
-            }
-            else if (srcLang == 'russian') {
-                tessOptions.lang ='rus';
-            }
-            else if (srcLang == 'korean') {
-                tessOptions.lang ='kor';
-            }
-            else if (srcLang == 'japanese') {
-                tessOptions.lang ='jpn';
-            }
-            else {
-                tessOptions.lang = 'eng';
-            }
-
-                if (tessOptions.lang == 'eng' || tessOptions.lang == 'fra') {
+                if (tessOptions.lang == 'eng') {
                     //This probably obviates the removeJunkText() function mostly, but I guess that can still
                     //get rid of stray consonants that aren't part of words.
                     tessOptions.tessedit_char_whitelist = "ABCDEFGHIJKLMNOPQRSTUVWYZabcdefghijklmnopqrstuvwxyz1234567890.?!"
@@ -77,9 +76,9 @@ function initializeImageTranslateApp() {
                     handleOCRResult(result);
                 });
             }
-            
-            
-            
+
+
+
         }
     }
     return {image: image, canvas: canvas};
@@ -93,12 +92,8 @@ function initializeImageTranslateApp() {
  */
 function getOCRMethodBySourceLanguage(srcLang) {
     const latinLangs = ['auto', 'czech', 'danish', 'dutch', 'english', 'finnish', 'french', 'german', 'indonesian', 'italian', 'polish', 'portugese', 'spanish', 'swedish', 'turkish'];
-<<<<<<< HEAD
-    if (srcLang.toLowerCase() in latinLangs && imageTranslateApp.pdf == false) {
 
-=======
-    if (latinLangs.includes(srcLang.toLowerCase())) {
->>>>>>> origin/bf-du-rekognition
+    if (latinLangs.includes(srcLang.toLowerCase()) && imageTranslateApp.pdf == false) {
         return "rekognize";
     }
     return "tesseract";
@@ -122,19 +117,16 @@ function tesseractRecognize(imageInput, options) {
     });
 }
 
-<<<<<<< HEAD
 /* How to actually make the AJAX request we need to use our Rekognition route:
  *
  */
 function deleteMe() {
     ocrReq({dataUrl: image.src})
-=======
 /* Make an OCR request to the backend which uses some 3rd party API.
  * In particular the backend uses Amazon Rekognition for now, but the frontend
  * shouldn't need to know those details. */
 function backendOCR(base64Image, imageWidth, imageHeight) {
     ocrReq({image: base64Image})
->>>>>>> origin/bf-du-rekognition
         .then(lines => {
             lines.lines = lines;
             for (var idx = 0; idx < lines.lines.length; idx++) {
