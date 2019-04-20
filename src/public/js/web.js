@@ -142,9 +142,9 @@ function readURL(input) {
         isSuccess = validTypes.indexOf(extension) > -1;
         if (isSuccess) {
             var reader = new FileReader();
-            if(extension == 'pdf' ){
-		var image1 = URL.createObjectURL($('.file-upload-input').get(0).files[0]);
-		showPDF(image1);
+            if(extension == 'pdf' ) {
+		        var image1 = URL.createObjectURL($('.file-upload-input').get(0).files[0]);
+		        showPDF(image1);
 
 
 
@@ -155,17 +155,16 @@ function readURL(input) {
                     $('.pdf-buttons').show();
                     $('.text-rendering-controls').hide();
                     $('.image-title').html(input.files[0].name);
+                    input.value = null;
                 };
-
                 reader.readAsDataURL(input.files[0]);
-
-		imageTranslateApp.pdf = true;
+                imageTranslateApp.pdf = true;
+                
             } else if (extension == 'jpg', 'png', 'jpeg') {
 		imageTranslateApp.pdf = false;
 
                 //alert('You have inserted an image.');
                 //Nothing else to do here because the image .onload function initiates OCR
-            	
 
                 reader.onload = function(e) {
                     $('.image-upload-wrap').hide();
@@ -174,6 +173,7 @@ function readURL(input) {
                     $('.pdf-buttons').hide();
                     $('.text-rendering-controls').hide();
                     $('.image-title').html(input.files[0].name);
+                    input.value = null;
                 };
 	   
                 reader.readAsDataURL(input.files[0]);
@@ -217,7 +217,7 @@ function showPDF(pdf_url) {
     });
 }
 
-function showPage(page_no){
+function showPage(page_no) {
     console.log("In showPage()");
     __PAGE_RENDERING_IN_PROGRESS =1;
     __CURRENT_PAGE = page_no;
@@ -238,13 +238,7 @@ function showPage(page_no){
             __PAGE_RENDERING_IN_PROGRESS = 0;
             console.log("Attempting to put canvas contents into img.");
             imageTranslateApp.image.src = __CANVAS.toDataURL();
-        
-	
-	
-	
-	
-	
-	});
+        });
     });
 }
 
