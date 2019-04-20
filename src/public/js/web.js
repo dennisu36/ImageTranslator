@@ -6,8 +6,6 @@ function initializeImageTranslateApp() {
     canvas.setWidth(600);
   
     image.onload = function() {
-        const image = imageTranslateApp.image;
-        const canvas = imageTranslateApp.canvas;
         let doImageMasking = (document.getElementById('masking-select').value === 'true');
 
         const fImage = new fabric.Image(image);
@@ -107,7 +105,7 @@ function readURL(input) {
                 //alert('You have inserted an image.');
                 //Nothing else to do here because the image .onload function initiates OCR
             }
-            reader.onload = (e) => {
+            reader.onload = function(e) {
                 $('.image-upload-wrap').hide();
                 $('#myImage').attr('src', e.target.result);
                 $('.file-upload-content').show();
