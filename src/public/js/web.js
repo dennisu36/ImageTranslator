@@ -25,37 +25,45 @@ function initializeImageTranslateApp() {
 
             //Determine OCR method by which language is selected
             const srcLang = document.getElementById('language-src-select').value;
+            console.log("srcLang: " + srcLang);
             const ocrMethod = getOCRMethodBySourceLanguage(srcLang);
-            
-            
-            if (srcLang == 'chinese') {
-                tessOptions.lang = 'chi_sim';
-            } else if (srcLang == 'french') {
-                tessOptions.lang ='fra';
-            } else {
-                tessOptions.lang = 'eng';
-            }
-
-            if (tessOptions.lang == 'eng' || tessOptions.lang == 'fra') {
-                //This probably obviates the removeJunkText() function mostly, but I guess that can still
-                //get rid of stray consonants that aren't part of words.
-                tessOptions.tessedit_char_whitelist = "ABCDEFGHIJKLMNOPQRSTUVWYZabcdefghijklmnopqrstuvwxyz1234567890.?!"
-            }
-
-            console.log("loaded...", "$$$$");
-            Tesseract.recognize(image,tessOptions)
-            .progress((progress) => {
-                console.log(progress, "$$$$");
-                if (progress.hasOwnProperty('progress')) {
-                    $('#progress').text(progress.status + ": " + (progress.progress * 100).toFixed(0) + " %");
+            console.log("Using OCR method: " + ocrMethod);
+            if (ocrMethod === "rekognize") {
+                console.log("Using backend for OCR. Image dimensions: (" + image.width + "," + image.height + ")");
+                backendOCR(image.src.split(',')[1], image.width, image.height); //split off the base64 header from img.src because Amazon doesn't like it
+            } else { //use tesseract
+                if (srcLang == 'chinese') {
+                    tessOptions.lang = 'chi_sim';
+                } else if (srcLang == 'french') {
+                    tessOptions.lang ='fra';
                 } else {
-                    $('#progress').text(progress.status);
+                    tessOptions.lang = 'eng';
                 }
-            }).then((result) => {
-                console.log(result, "$$$$");
-                $('#result').text(removeJunkText(result.text));
-                handleOCRResult(result);
-            });
+
+                if (tessOptions.lang == 'eng' || tessOptions.lang == 'fra') {
+                    //This probably obviates the removeJunkText() function mostly, but I guess that can still
+                    //get rid of stray consonants that aren't part of words.
+                    tessOptions.tessedit_char_whitelist = "ABCDEFGHIJKLMNOPQRSTUVWYZabcdefghijklmnopqrstuvwxyz1234567890.?!"
+                }
+
+                console.log("loaded...", "$$$$");
+                Tesseract.recognize(image,tessOptions)
+                .progress((progress) => {
+                    console.log(progress, "$$$$");
+                    if (progress.hasOwnProperty('progress')) {
+                        $('#progress').text(progress.status + ": " + (progress.progress * 100).toFixed(0) + " %");
+                    } else {
+                        $('#progress').text(progress.status);
+                    }
+                }).then((result) => {
+                    console.log(result, "$$$$");
+                    $('#result').text(removeJunkText(result.text));
+                    handleOCRResult(result);
+                });
+            }
+            
+            
+            
         }
     }
     return {image: image, canvas: canvas};
@@ -69,7 +77,7 @@ function initializeImageTranslateApp() {
  */
 function getOCRMethodBySourceLanguage(srcLang) {
     const latinLangs = ['auto', 'czech', 'danish', 'dutch', 'english', 'finnish', 'french', 'german', 'indonesian', 'italian', 'polish', 'portugese', 'spanish', 'swedish', 'turkish'];
-    if (srcLang.toLowerCase() in latinLangs) {
+    if (latinLangs.includes(srcLang.toLowerCase())) {
         return "rekognize";
     }
     return "tesseract";
@@ -93,12 +101,19 @@ function tesseractRecognize(imageInput, options) {
     });
 }
 
-/* How to actually make the AJAX request we need to use our Rekognition route:
- * 
- */
-function deleteMe() {
-    ocrReq({dataUrl: image.src})
+/* Make an OCR request to the backend which uses some 3rd party API.
+ * In particular the backend uses Amazon Rekognition for now, but the frontend
+ * shouldn't need to know those details. */
+function backendOCR(base64Image, imageWidth, imageHeight) {
+    ocrReq({image: base64Image})
         .then(lines => {
+            lines.lines = lines;
+            for (var idx = 0; idx < lines.lines.length; idx++) {
+                lines.lines[idx].bbox.x0 = Math.round(lines.lines[idx].bbox.x0 * imageWidth);
+                lines.lines[idx].bbox.x1 = Math.round(lines.lines[idx].bbox.x1 * imageWidth);
+                lines.lines[idx].bbox.y0 = Math.round(lines.lines[idx].bbox.y0 * imageHeight);
+                lines.lines[idx].bbox.y1 = Math.round(lines.lines[idx].bbox.y1 * imageHeight);
+            }
             console.log(lines);
             handleOCRResult(lines);
         })
@@ -106,8 +121,6 @@ function deleteMe() {
             console.error(error);
         });
 }
-
-
 
 async function ocrReq(data) {
     const res = await fetch('/ocr', { 
