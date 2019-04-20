@@ -27,20 +27,35 @@ function initializeImageTranslateApp() {
             const srcLang = document.getElementById('language-src-select').value;
             console.log("srcLang: " + srcLang);
             const ocrMethod = getOCRMethodBySourceLanguage(srcLang);
+
             console.log("Using OCR method: " + ocrMethod);
             if (ocrMethod === "rekognize") {
                 console.log("Using backend for OCR. Image dimensions: (" + image.width + "," + image.height + ")");
                 backendOCR(image.src.split(',')[1], image.width, image.height); //split off the base64 header from img.src because Amazon doesn't like it
             } else { //use tesseract
-                if (srcLang == 'chinese') {
+                if (srcLang == 'chinese_simplified') {
                     tessOptions.lang = 'chi_sim';
-                } else if (srcLang == 'french') {
-                    tessOptions.lang ='fra';
-                } else {
+                }
+                else if (srcLang == 'chinese_traditional') {
+                    tessOptions.lang = 'chi_tra';
+                }
+                else if (srcLang == 'arabic') {
+                    tessOptions.lang ='ara';
+                }
+                else if (srcLang == 'russian') {
+                    tessOptions.lang ='rus';
+                }
+                else if (srcLang == 'korean') {
+                    tessOptions.lang ='kor';
+                }
+                else if (srcLang == 'japanese') {
+                    tessOptions.lang ='jpn';
+                }
+                else {
                     tessOptions.lang = 'eng';
                 }
 
-                if (tessOptions.lang == 'eng' || tessOptions.lang == 'fra') {
+                if (tessOptions.lang == 'eng') {
                     //This probably obviates the removeJunkText() function mostly, but I guess that can still
                     //get rid of stray consonants that aren't part of words.
                     tessOptions.tessedit_char_whitelist = "ABCDEFGHIJKLMNOPQRSTUVWYZabcdefghijklmnopqrstuvwxyz1234567890.?!"
@@ -61,9 +76,9 @@ function initializeImageTranslateApp() {
                     handleOCRResult(result);
                 });
             }
-            
-            
-            
+
+
+
         }
     }
     return {image: image, canvas: canvas};
@@ -77,7 +92,8 @@ function initializeImageTranslateApp() {
  */
 function getOCRMethodBySourceLanguage(srcLang) {
     const latinLangs = ['auto', 'czech', 'danish', 'dutch', 'english', 'finnish', 'french', 'german', 'indonesian', 'italian', 'polish', 'portugese', 'spanish', 'swedish', 'turkish'];
-    if (latinLangs.includes(srcLang.toLowerCase())) {
+
+    if (latinLangs.includes(srcLang.toLowerCase()) && imageTranslateApp.pdf == false) {
         return "rekognize";
     }
     return "tesseract";
@@ -94,7 +110,7 @@ function tesseractRecognize(imageInput, options) {
         }
     }).then((result) => {
         console.log(result, "$$$$");
-        
+
         //TODO FIXME this deletes the #progress span inside so progress doesn't get shown the next time around.
         $('#result').text(removeJunkText(result.text));
         handleOCRResult(result);
@@ -145,7 +161,9 @@ function readURL(input) {
             if(extension == 'pdf' ){
 		var image1 = URL.createObjectURL($('.file-upload-input').get(0).files[0]);
 		showPDF(image1);
+		imageTranslateApp.pdf = true;
             } else if (extension == 'jpg', 'png', 'jpeg') {
+		imageTranslateApp.pdf = false;
                 //alert('You have inserted an image.');
                 //Nothing else to do here because the image .onload function initiates OCR
             }
