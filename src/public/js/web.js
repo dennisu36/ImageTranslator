@@ -3,7 +3,7 @@ function initializeImageTranslateApp() {
     const canvas = new fabric.StaticCanvas('myCanvas');
     canvas.setHeight(600);
     canvas.setWidth(600);
-  
+
     image.onload = function() {
 
         var fImage = new fabric.Image(image);
@@ -27,43 +27,42 @@ function initializeImageTranslateApp() {
             const srcLang = document.getElementById('language-src-select').value;
             console.log("srcLang: " + srcLang);
             const ocrMethod = getOCRMethodBySourceLanguage(srcLang);
+
             console.log("Using OCR method: " + ocrMethod);
             if (ocrMethod === "rekognize") {
                 console.log("Using backend for OCR. Image dimensions: (" + image.width + "," + image.height + ")");
                 backendOCR(image.src.split(',')[1], image.width, image.height); //split off the base64 header from img.src because Amazon doesn't like it
             } else { //use tesseract
-                if (srcLang == 'chinese') {
+                if (srcLang == 'chinese_simplified') {
                     tessOptions.lang = 'chi_sim';
-                } else if (srcLang == 'french') {
-                    tessOptions.lang ='fra';
-                } else {
+                }
+                else if (srcLang == 'chinese_traditional') {
+                    tessOptions.lang = 'chi_tra';
+                }
+                else if (srcLang == 'arabic') {
+                    tessOptions.lang ='ara';
+                }
+                else if (srcLang == 'russian') {
+                    tessOptions.lang ='rus';
+                }
+                else if (srcLang == 'korean') {
+                    tessOptions.lang ='kor';
+                }
+                else if (srcLang == 'japanese') {
+                    tessOptions.lang ='jpn';
+                }
+                else {
                     tessOptions.lang = 'eng';
                 }
 
-                if (tessOptions.lang == 'eng' || tessOptions.lang == 'fra') {
+                if (tessOptions.lang == 'eng') {
                     //This probably obviates the removeJunkText() function mostly, but I guess that can still
                     //get rid of stray consonants that aren't part of words.
                     tessOptions.tessedit_char_whitelist = "ABCDEFGHIJKLMNOPQRSTUVWYZabcdefghijklmnopqrstuvwxyz1234567890.?!"
                 }
 
-                console.log("loaded...", "$$$$");
-                Tesseract.recognize(image,tessOptions)
-                .progress((progress) => {
-                    console.log(progress, "$$$$");
-                    if (progress.hasOwnProperty('progress')) {
-                        $('#progress').text(progress.status + ": " + (progress.progress * 100).toFixed(0) + " %");
-                    } else {
-                        $('#progress').text(progress.status);
-                    }
-                }).then((result) => {
-                    console.log(result, "$$$$");
-                    $('#result').text(removeJunkText(result.text));
-                    handleOCRResult(result);
-                });
+                tesseractRecognize(image, tessOptions);
             }
-            
-            
-            
         }
     }
     return {image: image, canvas: canvas};
@@ -77,7 +76,8 @@ function initializeImageTranslateApp() {
  */
 function getOCRMethodBySourceLanguage(srcLang) {
     const latinLangs = ['auto', 'czech', 'danish', 'dutch', 'english', 'finnish', 'french', 'german', 'indonesian', 'italian', 'polish', 'portugese', 'spanish', 'swedish', 'turkish'];
-    if (latinLangs.includes(srcLang.toLowerCase())) {
+
+    if (latinLangs.includes(srcLang.toLowerCase()) && imageTranslateApp.pdf == false) {
         return "rekognize";
     }
     return "tesseract";
@@ -94,7 +94,7 @@ function tesseractRecognize(imageInput, options) {
         }
     }).then((result) => {
         console.log(result, "$$$$");
-        
+
         //TODO FIXME this deletes the #progress span inside so progress doesn't get shown the next time around.
         $('#result').text(removeJunkText(result.text));
         handleOCRResult(result);
@@ -147,33 +147,37 @@ function readURL(input) {
 		showPDF(image1);
 
 
-		     reader.onload = function(e) {
-                $('.image-upload-wrap').hide();
-                $('#myImage').attr('src', e.target.result);
-                $('.file-upload-content').show();
-              $('.pdf-buttons').show();
-                $('.text-rendering-controls').hide();
-                $('.image-title').html(input.files[0].name);
-            };
 
-            reader.readAsDataURL(input.files[0]);
-	    
-	    } else if (extension == 'jpg', 'png', 'jpeg') {
+                reader.onload = function(e) {
+                    $('.image-upload-wrap').hide();
+                    $('#myImage').attr('src', e.target.result);
+                    $('.file-upload-content').show();
+                    $('.pdf-buttons').show();
+                    $('.text-rendering-controls').hide();
+                    $('.image-title').html(input.files[0].name);
+                };
+
+                reader.readAsDataURL(input.files[0]);
+
+		imageTranslateApp.pdf = true;
+            } else if (extension == 'jpg', 'png', 'jpeg') {
+		imageTranslateApp.pdf = false;
+
                 //alert('You have inserted an image.');
                 //Nothing else to do here because the image .onload function initiates OCR
             	
-	       
-            reader.onload = function(e) {
-                $('.image-upload-wrap').hide();
-                $('#myImage').attr('src', e.target.result);
-                $('.file-upload-content').show();
-                $('.pdf-buttons').hide();
-		$('.text-rendering-controls').hide();
-                $('.image-title').html(input.files[0].name);
-            };
+
+                reader.onload = function(e) {
+                    $('.image-upload-wrap').hide();
+                    $('#myImage').attr('src', e.target.result);
+                    $('.file-upload-content').show();
+                    $('.pdf-buttons').hide();
+                    $('.text-rendering-controls').hide();
+                    $('.image-title').html(input.files[0].name);
+                };
 	   
-            reader.readAsDataURL(input.files[0]);
-	}
+                reader.readAsDataURL(input.files[0]);
+            }
         } else {
             alert('Invalid File Type. Please insert JPG, JPEG, PNG, or PDF files.');
             removeUpload();
@@ -211,7 +215,6 @@ function showPDF(pdf_url) {
         console.log(error.message);
         alert(error.message);
     });
-
 }
 
 function showPage(page_no){
@@ -245,28 +248,15 @@ function showPage(page_no){
     });
 }
 
-
 $("#pdf-prev").on('click', function() {
     if(__CURRENT_PAGE != 1)
         showPage(--__CURRENT_PAGE);
 });
 
-
-
-
-
-
-
-
 $("#pdf-next").on('click', function() {
     if(__CURRENT_PAGE != __TOTAL_PAGES)
         showPage(++__CURRENT_PAGE);
 });
-
-
-
-
-
 
 function removeUpload() {
     $('.file-upload-input').replaceWith($('.file-upload-input').clone());
@@ -288,9 +278,6 @@ $('.image-upload-wrap').bind('dragover', function () {
 $('.image-upload-wrap').bind('dragleave', function () {
     $('.image-upload-wrap').removeClass('image-dropping');
 });
-
-
-
 
 //Pass the OCR result here and process the detected segments appropriately.
 function handleOCRResult(result) {
