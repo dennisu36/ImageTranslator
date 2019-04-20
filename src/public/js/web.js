@@ -23,8 +23,11 @@ function initializeImageTranslateApp() {
                 tessedit_pageseg_mode: 1
             };
 
-            //make Tesseract match with source language that is selected
+            //Determine OCR method by which language is selected
             const srcLang = document.getElementById('language-src-select').value;
+            const ocrMethod = getOCRMethodBySourceLanguage(srcLang);
+            
+            
             if (srcLang == 'chinese') {
                 tessOptions.lang = 'chi_sim';
             } else if (srcLang == 'french') {
@@ -58,6 +61,20 @@ function initializeImageTranslateApp() {
     return {image: image, canvas: canvas};
 }
 
+/* Returns the OCR method to be used for a particular language. All latin-text
+ * lanuages return "rekognize", everything else returns "tesseract".
+ * 
+ * @param string srcLang the name of the language to check OCR method for
+ * @returns string either "rekognize" or "tesseract"
+ */
+function getOCRMethodBySourceLanguage(srcLang) {
+    const latinLangs = ['auto', 'czech', 'danish', 'dutch', 'english', 'finnish', 'french', 'german', 'indonesian', 'italian', 'polish', 'portugese', 'spanish', 'swedish', 'turkish'];
+    if (srcLang.toLowerCase() in latinLangs) {
+        return "rekognize";
+    }
+    return "tesseract";
+}
+
 function tesseractRecognize(imageInput, options) {
     Tesseract.recognize(imageInput,options)
     .progress((progress) => {
@@ -76,6 +93,7 @@ function tesseractRecognize(imageInput, options) {
     });
 }
 
+<<<<<<< Updated upstream
 /* How to actually make the AJAX request we need to use our Rekognition route:
  * 
  */
@@ -147,6 +165,8 @@ function initializeOCR() {
 }
 */
 
+=======
+>>>>>>> Stashed changes
 var validTypes = ['jpg', 'jpeg', 'png', 'pdf'];
 function readURL(input) {
     if (input.files && input.files[0]) {
