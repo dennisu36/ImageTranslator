@@ -102,7 +102,7 @@ function tesseractRecognize(imageInput, options) {
         console.log(result, "$$$$");
 
         //TODO FIXME this deletes the #progress span inside so progress doesn't get shown the next time around.
-        $('#result').text(removeJunkText(result.text));
+        $('#result > h6').append('<br>' + removeJunkText(result.text));
         handleOCRResult(result);
     });
 }
@@ -257,6 +257,8 @@ function removeUpload() {
     $('.file-upload-input').replaceWith($('.file-upload-input').clone());
     $('.file-upload-content').hide();
     $('.image-upload-wrap').show();
+    $('#result > h6').text('OCR Result:');
+    $('#progress').text('');
     console.log(imageTranslateApp.canvas.getObjects());
     imageTranslateApp.canvas.remove(...imageTranslateApp.canvas.getObjects());
     $('.toggle-text').html("Hide Rendered Text");
