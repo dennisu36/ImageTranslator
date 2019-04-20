@@ -27,51 +27,12 @@ function initializeImageTranslateApp() {
             const srcLang = document.getElementById('language-src-select').value;
             console.log("srcLang: " + srcLang);
             const ocrMethod = getOCRMethodBySourceLanguage(srcLang);
-<<<<<<< HEAD
 
-
-            if (srcLang == 'chinese_simplified') {
-                tessOptions.lang = 'chi_sim';
-            }
-	    else if (srcLang == 'chinese_traditional') {
-		tessOptions.lang = 'chi_tra';
-	    }
-	    else if (srcLang == 'arabic') {
-                tessOptions.lang ='ara';
-            }
-	    else if (srcLang == 'russian') {
-                tessOptions.lang ='rus';
-            }
-	    else if (srcLang == 'korean') {
-                tessOptions.lang ='kor';
-            }
-	    else if (srcLang == 'japanese') {
-                tessOptions.lang ='jpn';
-            }
-	    else {
-                tessOptions.lang = 'eng';
-            }
-
-            if (tessOptions.lang == 'eng' || tessOptions.lang == 'fra') {
-                //This probably obviates the removeJunkText() function mostly, but I guess that can still
-                //get rid of stray consonants that aren't part of words.
-                tessOptions.tessedit_char_whitelist = "ABCDEFGHIJKLMNOPQRSTUVWYZabcdefghijklmnopqrstuvwxyz1234567890.?!"
-            }
-
-            console.log("loaded...", "$$$$");
-            Tesseract.recognize(image,tessOptions)
-            .progress((progress) => {
-                console.log(progress, "$$$$");
-                if (progress.hasOwnProperty('progress')) {
-                    $('#progress').text(progress.status + ": " + (progress.progress * 100).toFixed(0) + " %");
-=======
             console.log("Using OCR method: " + ocrMethod);
             if (ocrMethod === "rekognize") {
                 console.log("Using backend for OCR. Image dimensions: (" + image.width + "," + image.height + ")");
                 backendOCR(image.src.split(',')[1], image.width, image.height); //split off the base64 header from img.src because Amazon doesn't like it
             } else { //use tesseract
-                
-
 
             if (srcLang == 'chinese_simplified') {
                 tessOptions.lang = 'chi_sim';
@@ -94,16 +55,6 @@ function initializeImageTranslateApp() {
             else {
                 tessOptions.lang = 'eng';
             }
-
-            if (tessOptions.lang == 'eng' || tessOptions.lang == 'fra') {
-                //This probably obviates the removeJunkText() function mostly, but I guess that can still
-                //get rid of stray consonants that aren't part of words.
-                tessOptions.tessedit_char_whitelist = "ABCDEFGHIJKLMNOPQRSTUVWYZabcdefghijklmnopqrstuvwxyz1234567890.?!"
-            }
->>>>>>> origin/bf-du-rekognition
-                } else {
-                    tessOptions.lang = 'eng';
-                }
 
                 if (tessOptions.lang == 'eng' || tessOptions.lang == 'fra') {
                     //This probably obviates the removeJunkText() function mostly, but I guess that can still
