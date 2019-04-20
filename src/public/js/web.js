@@ -175,9 +175,9 @@ function readURL(input) {
         isSuccess = validTypes.indexOf(extension) > -1;
         if (isSuccess) {
             var reader = new FileReader();
-            if(extension == 'pdf' ){
-		var image1 = URL.createObjectURL($('.file-upload-input').get(0).files[0]);
-		showPDF(image1);
+            if(extension == 'pdf' ) {
+		        var image1 = URL.createObjectURL($('.file-upload-input').get(0).files[0]);
+		        showPDF(image1);
 
                 reader.onload = function(e) {
                     $('.image-upload-wrap').hide();
@@ -186,13 +186,13 @@ function readURL(input) {
                     $('.pdf-buttons').show();
                     $('.text-rendering-controls').hide();
                     $('.image-title').html(input.files[0].name);
+                    input.value = null;
                 };
-
                 reader.readAsDataURL(input.files[0]);
-
-		imageTranslateApp.pdf = true;
+                imageTranslateApp.pdf = true;
+                
             } else if (extension == 'jpg', 'png', 'jpeg') {
-		imageTranslateApp.pdf = false;
+		        imageTranslateApp.pdf = false;
                 //alert('You have inserted an image.');
                 //Nothing else to do here because the image .onload function initiates OCR
                 reader.onload = function(e) {
@@ -202,6 +202,7 @@ function readURL(input) {
                     $('.pdf-buttons').hide();
                     $('.text-rendering-controls').hide();
                     $('.image-title').html(input.files[0].name);
+                    input.value = null;
                 };
 	   
                 reader.readAsDataURL(input.files[0]);
@@ -266,7 +267,7 @@ function showPage(page_no){
             __PAGE_RENDERING_IN_PROGRESS = 0;
             console.log("Attempting to put canvas contents into img.");
             imageTranslateApp.image.src = __CANVAS.toDataURL();
-	});
+	    });
     });
 }
 
@@ -399,8 +400,6 @@ function renderText(textInput, destLang, X, Y, textboxWidth, textboxHeight) {
     console.log(textInput + " in " + destLang + " at " + X + "," + Y +
             " width: " + textboxWidth + " height: " + textboxHeight);
     
-    var fImage = imageTranslateApp.canvas.backgroundImage;
-
     //render a background rect in black
     var rect = new fabric.Rect({
         left: X,
