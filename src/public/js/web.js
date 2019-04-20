@@ -1,49 +1,57 @@
+
 function initializeImageTranslateApp() {
     const image = document.getElementById('myImage');
-    const canvas = new fabric.Canvas('myCanvas', {
-        isDrawingMode: true
-    });
+    const canvas = new fabric.Canvas('myCanvas');
     canvas.setHeight(600);
     canvas.setWidth(600);
   
     image.onload = function() {
+        const image = imageTranslateApp.image;
+        const canvas = imageTranslateApp.canvas;
+        let doImageMasking = (document.getElementById('masking-select').value === 'true');
 
         const fImage = new fabric.Image(image);
         fImage.scaleToHeight(canvas.getHeight());
         canvas.setWidth(fImage.getScaledWidth());
         canvas.setBackgroundImage(fImage);
         canvas.calcOffset();
-        canvas.freeDrawingBrush.width = 25;
-        canvas.freeDrawingBrush.color = 'rgba(0,255,63, .45)';
+
+        if (doImageMasking) {
+            canvas.isDrawingMode = true;
+            canvas.freeDrawingBrush.width = 40;
+            canvas.freeDrawingBrush.color = 'rgba(0,255,63, .45)';
+        }
 
         document.getElementById('translateButton').onclick = () => {
-            canvas.isDrawingMode = false;
-            canvas.selection = false;
-            canvas.forEachObject((obj, index) => {
-                obj.evented = false;
-                obj.set({
-                    stroke: 'rgba(0,0,0,1)'
-                });
-            });
-            const select = new fabric.ActiveSelection(canvas.getObjects(), {
-                canvas: canvas
-            });
-            canvas.clipPath = select;
-            canvas.renderAll();
-            select.visible = false;
-            canvas.renderAll();
 
-            const clippedImage = canvas.toDataURL();
-            console.log(clippedImage);
-            //canvas.clear();
-            canvas.clipPath = null;
-            select.forEachObject((obj) => {
-                obj.set({
-                    stroke: 'rgba(0,0,0,0)'
+            let clippedImage = null;
+            if (doImageMasking) {
+                canvas.isDrawingMode = false;
+                canvas.selection = false;
+                canvas.forEachObject((obj, index) => {
+                    obj.evented = false;
+                    obj.set({
+                        stroke: 'rgba(0,0,0,1)'
+                    });
                 });
-            })
-            canvas.renderAll();
-            canvas.setBackgroundImage(fImage);
+                const select = new fabric.ActiveSelection(canvas.getObjects(), {
+                    canvas: canvas
+                });
+                canvas.clipPath = select;
+                select.forEachObject((obj) => {
+                    canvas.remove(obj);
+                })
+                canvas.renderAll();
+
+                clippedImage = canvas.toDataURL();
+                console.log(clippedImage);
+
+                canvas.clipPath = null;
+                canvas.renderAll();
+                canvas.setBackgroundImage(fImage);
+            } else {
+                clippedImage = canvas.toDataURL();
+            }
 
             //Start setting Tesseract options
             tessOptions = {
@@ -99,11 +107,12 @@ function readURL(input) {
                 //alert('You have inserted an image.');
                 //Nothing else to do here because the image .onload function initiates OCR
             }
-            reader.onload = function(e) {
+            reader.onload = (e) => {
                 $('.image-upload-wrap').hide();
                 $('#myImage').attr('src', e.target.result);
                 $('.file-upload-content').show();
                 $('.image-title').html(input.files[0].name);
+                input.value = null; // Clear file input to trigger onchange on same file
             };
             reader.readAsDataURL(input.files[0]);
         } else {
@@ -118,6 +127,7 @@ function removeUpload() {
     $('.file-upload-content').hide();
     $('.image-upload-wrap').show();
     imageTranslateApp.canvas.remove(...imageTranslateApp.canvas.getObjects());
+    $('#myImage').attr('src', '');
     console.log("Removed image");
 }
 
@@ -224,13 +234,7 @@ async function handleServerResponse(textList, boundingBoxes) {
 function renderText(textInput, X, Y, textboxWidth, textboxHeight) {
     console.log(textInput + " at " + X + "," + Y + " width: " + textboxWidth + " height: " + textboxHeight);
     
-    var fImage = imageTranslateApp.canvas.item(0);
-    var scaleX = fImage.scaleX;
-    var scaleY = fImage.scaleY;
-    X *= scaleX;
-    Y *= scaleY;
-    textboxWidth *= scaleX;
-    textboxHeight *= scaleY;
+    var fImage = imageTranslateApp.canvas.backgroundImage;
 
     //render a background rect in black
     var rect = new fabric.Rect({
