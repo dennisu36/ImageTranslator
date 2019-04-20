@@ -16,26 +16,36 @@ class AmazonRekognition implements OCRInterface {
     private function convertOCRResponseToTesseractFormat($rekognitionResponse) {
         $newAry = [];
         foreach ($rekognitionResponse as $responseKey => $lineData) {
-            $newAry += [
+            $ocrLine = [
                 "text" => $lineData['DetectedText'],
-                "bbox" => $lineData['BoundingBox']
+                "bbox" => [
+                    "x0" => $lineData['BoundingBox']['Left'],
+                    "y0" => $lineData['BoundingBox']['Top'],
+                    "x1" => (float)$lineData['BoundingBox']['Left'] + (float)$lineData['BoundingBox']['Width'],
+                    "y1" => (float)$lineData['BoundingBox']['Top'] + (float)$lineData['BoundingBox']['Height'],
+                ]
             ];
+            array_push($newAry, $ocrLine);
         }
         return $newAry;
     }
 
-    public function getTranslation($base64EncodedImage) {
-	$client = new Aws\Rekognition\RekognitionClient([
+    public function getOCR($base64EncodedImage) {
+	$client = new RekognitionClient([
             'profile' => 'default',
             'region' => 'us-east-2',
             'version' => 'latest',
 	]);
 
-	$result = $client->detectText([
-            'Image' => [
-                'Bytes' => base64_decode($base64EncodedImage),
-            ],
-	]);
+        try {
+            $result = $client->detectText([
+                'Image' => [
+                    'Bytes' => base64_decode($base64EncodedImage),
+                ],
+            ]);
+        } catch (AwsException $e) {
+            return ['error' => $e->getMessage()];
+        }
 
 	$textReceived = $result;
 	//Rekognition gives you an array of lines and words and to make it not repeat it only prints it if it is a word, not a line of text.

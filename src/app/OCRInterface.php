@@ -4,5 +4,5 @@ namespace App;
 
 interface OCRInterface
 {
-    public function getTranslation($base64EncodedImage);
+    public function getOCR($base64EncodedImage);
 }

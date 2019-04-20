@@ -76,6 +76,35 @@ function tesseractRecognize(imageInput, options) {
     });
 }
 
+/* How to actually make the AJAX request we need to use our Rekognition route:
+ * 
+ */
+function deleteMe() {
+    ocrReq({dataUrl: image.src})
+        .then(lines => {
+            console.log(lines);
+            handleOCRResult(lines);
+        })
+        .catch(error => {
+            console.error(error);
+        });
+}
+
+
+
+async function ocrReq(data) {
+    const res = await fetch('/ocr', { 
+        method: 'POST', 
+        body: JSON.stringify(data),
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    }).then(response => response.json()).catch(error => {
+        console.error(error);
+    });
+    return res;
+}
+
 
 /*
 function initializeOCR() {

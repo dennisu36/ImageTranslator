@@ -4,8 +4,9 @@ use Slim\Http\Request;
 use Slim\Http\Response;
 use App\TranslationRequestValidator;
 use App\AmazonTranslate;
+use App\AmazonRekognition;
 
-//This is the "home page" route that just loads the app
+//This is the "home page" route that just loads the app interface/template
 $app->get('/', function (Request $request, Response $response, array $args) {
     return $this->renderer->render($response, 'index.phtml', $args);
 });
@@ -19,21 +20,28 @@ $app->get('/good', function (Request $request, Response $response, $args = []) {
 $app->post('/translate', function (Request $request, Response $response, array $args) {
     $translateRequestArray = $request->getParsedBody(); //this reads the JSON from the request and turns it into a PHP array
 
-    /* TODO Validate the parsed array to ensure all the required fields are there
-     * if the array is not valid, return JSON to the client with 'error' field(s) populated. */
     if (TranslationRequestValidator::isTranslateArrayValid($translateRequestArray) == false) {
         $errorsArray = TranslationRequestValidator::getTranslateArrayErrors($translateRequestArray);
         return $response->withJson($errorsArray, 400);
     }
 
-    /* TODO Pass the validated translation request array to the AmazonTranslate API */
     $translateApi = new AmazonTranslate();
     $translationResult = $translateApi->getTranslation($translateRequestArray['translate']);
 
     return $response->withJson($translationResult, 200);
 });
 
-$app-post('/rekognition', function (Request $request, Response $response, array $args) {
+$app->post('/ocr', function (Request $request, Response $response, array $args) {
+    $ocrRequestArray = $request->getParsedBody();
+    /*TODO should validate the request but for now we're just going to pass it through
+    * and assume everything is fine. */
 
-    return $response->withStatus(200);
+    $ocrApi = new AmazonRekognition();
+    $ocrResult = $ocrApi->getOCR($ocrRequestArray['image']);
+
+    if (array_key_exists('error', $ocrResult)) {
+        return $response->withJson($ocrResult, 400);
+    }
+
+    return $response->withJson($ocrResult, 200);
 });
