@@ -3,7 +3,7 @@ function initializeImageTranslateApp() {
     const canvas = new fabric.StaticCanvas('myCanvas');
     canvas.setHeight(600);
     canvas.setWidth(600);
-  
+
     image.onload = function() {
 
         var fImage = new fabric.Image(image);
