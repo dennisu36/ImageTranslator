@@ -145,20 +145,35 @@ function readURL(input) {
             if(extension == 'pdf' ){
 		var image1 = URL.createObjectURL($('.file-upload-input').get(0).files[0]);
 		showPDF(image1);
-            } else if (extension == 'jpg', 'png', 'jpeg') {
+
+
+		     reader.onload = function(e) {
+                $('.image-upload-wrap').hide();
+                $('#myImage').attr('src', e.target.result);
+                $('.file-upload-content').show();
+              $('.pdf-buttons').show();
+                $('.text-rendering-controls').hide();
+                $('.image-title').html(input.files[0].name);
+            };
+
+            reader.readAsDataURL(input.files[0]);
+	    
+	    } else if (extension == 'jpg', 'png', 'jpeg') {
                 //alert('You have inserted an image.');
                 //Nothing else to do here because the image .onload function initiates OCR
-            }
+            	
+	       
             reader.onload = function(e) {
                 $('.image-upload-wrap').hide();
                 $('#myImage').attr('src', e.target.result);
                 $('.file-upload-content').show();
-                $('.text-rendering-controls').hide();
+                $('.pdf-buttons').hide();
+		$('.text-rendering-controls').hide();
                 $('.image-title').html(input.files[0].name);
             };
 	   
             reader.readAsDataURL(input.files[0]);
-      
+	}
         } else {
             alert('Invalid File Type. Please insert JPG, JPEG, PNG, or PDF files.');
             removeUpload();
@@ -183,9 +198,13 @@ function showPDF(pdf_url) {
     console.log("In showPDF()");
     
     PDFJS.getDocument({ url: pdf_url }).then(function(pdf_doc) {
-                 __PDF_DOC = pdf_doc;
-
-    showPage(1);
+        __PDF_DOC = pdf_doc;
+	__TOTAL_PAGES = __PDF_DOC.numPages;
+    
+	    $("#pdf-buttons").show();
+	    
+	    
+	    showPage(1);
     
     }).catch(function(error){
 
@@ -216,9 +235,38 @@ function showPage(page_no){
             __PAGE_RENDERING_IN_PROGRESS = 0;
             console.log("Attempting to put canvas contents into img.");
             imageTranslateApp.image.src = __CANVAS.toDataURL();
-        });
+        
+	
+	
+	
+	
+	
+	});
     });
 }
+
+
+$("#pdf-prev").on('click', function() {
+    if(__CURRENT_PAGE != 1)
+        showPage(--__CURRENT_PAGE);
+});
+
+
+
+
+
+
+
+
+$("#pdf-next").on('click', function() {
+    if(__CURRENT_PAGE != __TOTAL_PAGES)
+        showPage(++__CURRENT_PAGE);
+});
+
+
+
+
+
 
 function removeUpload() {
     $('.file-upload-input').replaceWith($('.file-upload-input').clone());
@@ -240,6 +288,9 @@ $('.image-upload-wrap').bind('dragover', function () {
 $('.image-upload-wrap').bind('dragleave', function () {
     $('.image-upload-wrap').removeClass('image-dropping');
 });
+
+
+
 
 //Pass the OCR result here and process the detected segments appropriately.
 function handleOCRResult(result) {
