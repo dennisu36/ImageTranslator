@@ -384,7 +384,8 @@ function renderText(textInput, destLang, X, Y, textboxWidth, textboxHeight) {
         top: Y,
         width: textboxWidth,
         height: textboxHeight,
-        fill: 'black'
+        fill: 'black',
+        evented: false
     });
 
     // create text
@@ -394,7 +395,8 @@ function renderText(textInput, destLang, X, Y, textboxWidth, textboxHeight) {
         width: textboxWidth,
         height: textboxHeight,
         fontFamily: 'Consolas',
-        fill: 'white'
+        fill: 'white',
+        evented: false
     });
     
     var fontSizeVertical = textboxHeight;
