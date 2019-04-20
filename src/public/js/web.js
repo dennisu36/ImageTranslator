@@ -26,13 +26,27 @@ function initializeImageTranslateApp() {
             //Determine OCR method by which language is selected
             const srcLang = document.getElementById('language-src-select').value;
             const ocrMethod = getOCRMethodBySourceLanguage(srcLang);
-            
-            
-            if (srcLang == 'chinese') {
+
+
+            if (srcLang == 'chinese_simplified') {
                 tessOptions.lang = 'chi_sim';
-            } else if (srcLang == 'french') {
-                tessOptions.lang ='fra';
-            } else {
+            }
+	    else if (srcLang == 'chinese_traditional') {
+		tessOptions.lang = 'chi_tra';
+	    }
+	    else if (srcLang == 'arabic') {
+                tessOptions.lang ='ara';
+            }
+	    else if (srcLang == 'russian') {
+                tessOptions.lang ='rus';
+            }
+	    else if (srcLang == 'korean') {
+                tessOptions.lang ='kor';
+            }
+	    else if (srcLang == 'japanese') {
+                tessOptions.lang ='jpn';
+            }
+	    else {
                 tessOptions.lang = 'eng';
             }
 
@@ -86,7 +100,7 @@ function tesseractRecognize(imageInput, options) {
         }
     }).then((result) => {
         console.log(result, "$$$$");
-        
+
         //TODO FIXME this deletes the #progress span inside so progress doesn't get shown the next time around.
         $('#result').text(removeJunkText(result.text));
         handleOCRResult(result);
@@ -94,7 +108,7 @@ function tesseractRecognize(imageInput, options) {
 }
 
 /* How to actually make the AJAX request we need to use our Rekognition route:
- * 
+ *
  */
 function deleteMe() {
     ocrReq({dataUrl: image.src})
