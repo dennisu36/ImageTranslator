@@ -83,7 +83,8 @@ function initializeImageTranslateApp() {
  */
 function getOCRMethodBySourceLanguage(srcLang) {
     const latinLangs = ['auto', 'czech', 'danish', 'dutch', 'english', 'finnish', 'french', 'german', 'indonesian', 'italian', 'polish', 'portugese', 'spanish', 'swedish', 'turkish'];
-    if (srcLang.toLowerCase() in latinLangs) {
+    if (srcLang.toLowerCase() in latinLangs && imageTranslateApp.pdf == false) {
+
         return "rekognize";
     }
     return "tesseract";
@@ -146,7 +147,9 @@ function readURL(input) {
             if(extension == 'pdf' ){
 		var image1 = URL.createObjectURL($('.file-upload-input').get(0).files[0]);
 		showPDF(image1);
+		imageTranslateApp.pdf = true;
             } else if (extension == 'jpg', 'png', 'jpeg') {
+		imageTranslateApp.pdf = false;
                 //alert('You have inserted an image.');
                 //Nothing else to do here because the image .onload function initiates OCR
             }
