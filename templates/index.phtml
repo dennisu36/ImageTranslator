@@ -19,8 +19,15 @@
                 <div class="col-sm-12">
                     <h1 class="text-center">Image Translate: Quickly translate your images</h1>
                     <div class="file-upload-controls">
+                        <div class="instructions">
+                            <ul>
+                                <li>Select the source language of your image/pdf and the destination language you wish to translate to.</li>
+                                <li>Choose whether you wish to select the area of text to be translated (do image masking?)</li>
+                                <li>For best results, use a clear image with horizontal text and select the source language (rather than auto) if you know it.</li>
+                            </ul>
+                        </div>
                         <div class="language-select-div">
-                            <label for="language-src-select">Please select the source language.</label>
+                            <label for="language-src-select"><b>Source Language</b></label>
                             <select id="language-src-select">
                                 <option value="auto">Auto (Latin Text)</option>
                                 <option value="arabic">Arabic</option>
@@ -45,7 +52,8 @@
                                 <option value="swedish">Swedish</option>
                                 <option value="turkish">Turkish</option>
                             </select>
-                            <label for="language-dest-select">Please select the destination language.</label>
+                            <br/>
+                            <label for="language-dest-select"><b>Destination Language</b></label>
                             <select id="language-dest-select">
                                 <option value="english">English (Default)</option>
                                 <option value="arabic">Arabic</option>
@@ -71,7 +79,7 @@
                             </select>
                         </div><!-- end language-select-div -->
                         <div>
-                            <label for="masking-select">Do image masking?</label>
+                            <label for="masking-select"><b>Do Image Masking?</b></label>
                             <select id="masking-select">
                                 <option value="true">Yes</option>
                                 <option value="false">No</option>

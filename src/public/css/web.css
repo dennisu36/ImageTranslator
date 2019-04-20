@@ -141,6 +141,12 @@ h6 {
     height: 20px; /* height of the footer */
 }
 
+.instructions {
+    max-width: 600px;
+    margin: auto;
+    text-align: left;
+}
+
 .file-upload-controls {
     text-align: center;
     color: #fff;
@@ -149,7 +155,7 @@ h6 {
 .language-select-div {
     display: inline-block;
     margin: 0 auto;
-    margin-top: 50px;
+    margin-top: 0px;
 }
 
 .get-translation-div {
