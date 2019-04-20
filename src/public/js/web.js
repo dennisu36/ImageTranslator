@@ -18,6 +18,12 @@ function initializeImageTranslateApp() {
 
 
         document.getElementById('translateButton').onclick = () => {
+
+            canvas.forEachObject((obj, index) => {
+                if (index != 0)
+                    canvas.remove(obj);
+            })
+
             //Start setting Tesseract options
             tessOptions = {
                 tessedit_pageseg_mode: 1
