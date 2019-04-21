@@ -370,7 +370,7 @@ function correct(word) {
     word = word.toLowerCase();
     var punctuation = null;
     if (!word.match(/^[a-z0-9]+$/i)) {
-        punctuation = word[-1];
+        punctuation = word.slice(-1);
         word = word.slice(0, -1);
     }
     if (word in WORD_COUNTS) {
