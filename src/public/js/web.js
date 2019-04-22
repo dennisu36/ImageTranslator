@@ -44,7 +44,7 @@ function initializeImageTranslateApp() {
                 }).then((result) => {
             console.log(result, "$$$$");
             $('#result').text(removeJunkText(result.text));
-		result.text= autoCorrect(result.text);
+	    result.text= autoCorrect(result.text);
 	    $('#result').text(result.text);
             handleOCRResult(result);
         });
@@ -112,9 +112,9 @@ function handleOCRResult(result) {
         const obj = {};
         obj.id = index;
         obj.text = removeJunkText(line.text);
+	obj.text = autoCorrect(line.text);
         obj.source_language = srcLang;
         obj.destination_language = destLang;
-	//autoCorrect(obj);
         return obj;
     });
 
@@ -364,14 +364,20 @@ function correct(word) {
         return word.charAt(0).toUpperCase() + word.slice(1);
     }
     
-    function preserveCapitalization(word) {
-        return capital ? capitalize(word) : word;
+    function preserveCapsAndPuncts(word) {
+        word = capital ? capitalize(word) : word;
+        return punctuation ? word.concat(punctuation) : word;
     }
 
     var capital = word.toLowerCase() !== word;
     word = word.toLowerCase();
+    var punctuation = null;
+    if (!word.match(/^[a-z0-9]+$/i)) {
+        punctuation = word.slice(-1);
+        word = word.slice(0, -1);
+    }
     if (word in WORD_COUNTS) {
-        return preserveCapitalization(word);
+        return preserveCapsAndPuncts(word);
     }
 
     var maxCount = 0;
@@ -411,14 +417,14 @@ function correct(word) {
 
     if (word.length < 6) {
         if (maxCount2 > 100 * maxCount) {
-            return preserveCapitalization(correctWord2);
+            return preserveCapsAndPuncts(correctWord2);
         }
-        return preserveCapitalization(correctWord);
+        return preserveCapsAndPuncts(correctWord);
     } else {
         if (maxCount2 > 4 * maxCount) {
-            return preserveCapitalization(correctWord2);
+            return preserveCapsAndPuncts(correctWord2);
         }
-        return preserveCapitalization(correctWord);
+        return preserveCapsAndPuncts(correctWord);
     }
 }
 
