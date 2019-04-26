@@ -18,6 +18,12 @@ function initializeImageTranslateApp() {
 
 
         document.getElementById('translateButton').onclick = () => {
+
+            canvas.forEachObject((obj, index) => {
+                if (index != 0)
+                    canvas.remove(obj);
+            })
+
             //Start setting Tesseract options
             tessOptions = {
                 tessedit_pageseg_mode: 1
@@ -96,7 +102,7 @@ function tesseractRecognize(imageInput, options) {
         console.log(result, "$$$$");
 
         //TODO FIXME this deletes the #progress span inside so progress doesn't get shown the next time around.
-        $('#result').text(removeJunkText(result.text));
+        $('#result > h6').append('<br>' + removeJunkText(result.text));
         handleOCRResult(result);
     });
 }
@@ -143,11 +149,8 @@ function readURL(input) {
         if (isSuccess) {
             var reader = new FileReader();
             if(extension == 'pdf' ) {
-		        var image1 = URL.createObjectURL($('.file-upload-input').get(0).files[0]);
-		        showPDF(image1);
-
-
-
+                var image1 = URL.createObjectURL($('.file-upload-input').get(0).files[0]);
+                showPDF(image1);
                 reader.onload = function(e) {
                     $('.image-upload-wrap').hide();
                     $('#myImage').attr('src', e.target.result);
@@ -165,7 +168,6 @@ function readURL(input) {
 
                 //alert('You have inserted an image.');
                 //Nothing else to do here because the image .onload function initiates OCR
-
                 reader.onload = function(e) {
                     $('.image-upload-wrap').hide();
                     $('#myImage').attr('src', e.target.result);
@@ -175,7 +177,6 @@ function readURL(input) {
                     $('.image-title').html(input.files[0].name);
                     input.value = null;
                 };
-	   
                 reader.readAsDataURL(input.files[0]);
             }
         } else {
@@ -256,6 +257,8 @@ function removeUpload() {
     $('.file-upload-input').replaceWith($('.file-upload-input').clone());
     $('.file-upload-content').hide();
     $('.image-upload-wrap').show();
+    $('#result > h6').text('OCR Result:');
+    $('#progress').text('');
     console.log(imageTranslateApp.canvas.getObjects());
     imageTranslateApp.canvas.remove(...imageTranslateApp.canvas.getObjects());
     $('.toggle-text').html("Hide Rendered Text");
