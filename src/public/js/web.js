@@ -149,8 +149,8 @@ function readURL(input) {
         if (isSuccess) {
             var reader = new FileReader();
             if(extension == 'pdf' ) {
-		        var image1 = URL.createObjectURL($('.file-upload-input').get(0).files[0]);
-		        showPDF(image1);
+                var image1 = URL.createObjectURL($('.file-upload-input').get(0).files[0]);
+                showPDF(image1);
                 reader.onload = function(e) {
                     $('.image-upload-wrap').hide();
                     $('#myImage').attr('src', e.target.result);
@@ -164,7 +164,7 @@ function readURL(input) {
                 imageTranslateApp.pdf = true;
                 
             } else if (extension == 'jpg', 'png', 'jpeg') {
-		        imageTranslateApp.pdf = false;
+		imageTranslateApp.pdf = false;
 
                 //alert('You have inserted an image.');
                 //Nothing else to do here because the image .onload function initiates OCR
