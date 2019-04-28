@@ -39,27 +39,34 @@ function initializeImageTranslateApp() {
                 console.log("Using backend for OCR. Image dimensions: (" + image.width + "," + image.height + ")");
                 backendOCR(image.src.split(',')[1], image.width, image.height); //split off the base64 header from img.src because Amazon doesn't like it
             } else { //use tesseract
-                if (srcLang == 'chinese_simplified') {
-                    tessOptions.lang = 'chi_sim';
-                }
-                else if (srcLang == 'chinese_traditional') {
-                    tessOptions.lang = 'chi_tra';
-                }
-                else if (srcLang == 'arabic') {
-                    tessOptions.lang ='ara';
-                }
-                else if (srcLang == 'russian') {
-                    tessOptions.lang ='rus';
-                }
-                else if (srcLang == 'korean') {
-                    tessOptions.lang ='kor';
-                }
-                else if (srcLang == 'japanese') {
-                    tessOptions.lang ='jpn';
-                }
-                else {
-                    tessOptions.lang = 'eng';
-                }
+                const tessLangMapping = [
+                    ['arabic', 'ara'],
+                    ['chinese_simplified', 'chi_sim'],
+                    ['chinese_traditional', 'chi_tra'],
+                    ['czech', 'ces'],
+                    ['danish', 'dan'],
+                    ['dutch', 'nld'],
+                    ['english', 'eng'],
+                    ['finnish', 'fin'],
+                    ['french', 'fra'],
+                    ['german', 'deu'],
+                    ['hebrew', 'heb'],
+                    ['indonesian', 'ind'],
+                    ['italian', 'ita'],
+                    ['japanese', 'jpn'],
+                    ['korean', 'kor'],
+                    ['polish', 'pol'],
+                    ['portuguese', 'por'],
+                    ['russian', 'rus'],
+                    ['spanish', 'spa'],
+                    ['swedish', 'swe'],
+                    ['turkish', 'tur']
+                ]; //I'm sure there's a more succinct way to represent this mapping, but I don't spend much time writing JS
+                tessLangMapping.forEach(function(pair) {
+                    if (pair[0] == srcLang) {
+                        tessOptions.lang = pair[1];
+                    }
+                });
 
                 if (tessOptions.lang == 'eng') {
                     //This probably obviates the removeJunkText() function mostly, but I guess that can still
