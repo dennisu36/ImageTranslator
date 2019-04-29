@@ -62,10 +62,11 @@ function initializeImageTranslateApp() {
                     ['swedish', 'swe'],
                     ['turkish', 'tur']
                 ]; //I'm sure there's a more succinct way to represent this mapping, but I don't spend much time writing JS
+                tessOptions.lang = 'eng'; //default to english in case no pair matches
                 tessLangMapping.forEach(function(pair) {
                     if (pair[0] == srcLang) {
                         tessOptions.lang = pair[1];
-                    }
+                    } 
                 });
 
                 if (tessOptions.lang == 'eng') {
